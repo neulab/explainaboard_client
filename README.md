@@ -2,9 +2,8 @@
 
 ## Install
 - For CLI users
-```
-NOT RELEASED YET
-```
+    - Please see examples in `./tests`
+
 - For CLI developers
 ```
 pip install .
