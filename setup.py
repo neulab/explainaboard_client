@@ -2,7 +2,6 @@ import codecs
 import os
 
 from setuptools import find_packages, setup
-
 from version import __api_client_version__, __version__
 
 setup(
@@ -37,5 +36,5 @@ setup(
 os.system(
     "pip install https://github.com/neulab/explainaboard_web/releases"
     f"/download/{__api_client_version__}"
-    "/explainaboard_api_client-1.0.0-py3-none-any.whl"
+    f"/explainaboard_api_client-{__api_client_version__}-py3-none-any.whl"
 )
