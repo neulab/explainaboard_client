@@ -1,9 +1,9 @@
 from multiprocessing.pool import ApplyResult
 
 from explainaboard_api_client import ApiException
-from explainaboard_cli.client import ExplainaboardClient
-from explainaboard_cli.config import Config
-from explainaboard_cli.tests.test_utils import TestEndpointsE2E
+from explainaboard_client.client import ExplainaboardClient
+from explainaboard_client.config import Config
+from explainaboard_client.tests.test_utils import TestEndpointsE2E
 
 
 class TestUserAPI(TestEndpointsE2E):

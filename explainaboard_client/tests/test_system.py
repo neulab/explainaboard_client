@@ -7,8 +7,8 @@ from explainaboard_api_client.models import (
     SystemMetadata,
     SystemOutputProps,
 )
-from explainaboard_cli.tests.test_utils import test_artifacts_path, TestEndpointsE2E
-from explainaboard_cli.utils import generate_dataset_id
+from explainaboard_client.tests.test_utils import test_artifacts_path, TestEndpointsE2E
+from explainaboard_client.utils import generate_dataset_id
 
 
 class TestSystem(TestEndpointsE2E):

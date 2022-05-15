@@ -1,4 +1,4 @@
-from explainaboard_cli.tests.test_utils import TestEndpointsE2E
+from explainaboard_client.tests.test_utils import TestEndpointsE2E
 
 
 class TestInfo(TestEndpointsE2E):

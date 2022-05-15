@@ -4,12 +4,12 @@ from setuptools import find_packages, setup
 from version import __version__
 
 setup(
-    name="explainaboard_cli",
+    name="explainaboard_client",
     version=__version__,
-    description="Explainable CLI",
+    description="Explainable Client",
     long_description=codecs.open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/neulab/explainaboard_cli",
+    url="https://github.com/neulab/explainaboard_client",
     license="MIT License",
     classifiers=[
         "Intended Audience :: Developers",

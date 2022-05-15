@@ -3,8 +3,8 @@ import pathlib
 from typing import Final
 from unittest import TestCase
 
-from explainaboard_cli.client import ExplainaboardClient
-from explainaboard_cli.config import Config
+from explainaboard_client.client import ExplainaboardClient
+from explainaboard_client.config import Config
 
 TEST_CONFIG = Config(
     "explainaboard@gmail.com",

@@ -4,8 +4,8 @@ from typing import Union
 from explainaboard_api_client import ApiClient
 from explainaboard_api_client.api.default_api import DefaultApi
 from explainaboard_api_client.models import System, SystemCreateProps, SystemOutputProps
-from explainaboard_cli.config import Config
-from explainaboard_cli.utils import encode_file_to_base64
+from explainaboard_client.config import Config
+from explainaboard_client.utils import encode_file_to_base64
 
 
 class ExplainaboardClient(DefaultApi):
