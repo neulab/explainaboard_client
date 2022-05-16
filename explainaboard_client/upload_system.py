@@ -5,69 +5,124 @@ from explainaboard_api_client.model.system import System
 from explainaboard_api_client.model.system_create_props import SystemCreateProps
 from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.system_output_props import SystemOutputProps
-
 from explainaboard_client import Config, ExplainaboardClient
-from explainaboard_client.tasks import TaskType, DEFAULT_METRICS, infer_file_type, \
-    FileType
+from explainaboard_client.tasks import (
+    DEFAULT_METRICS,
+    FileType,
+    infer_file_type,
+    TaskType,
+)
 from explainaboard_client.utils import generate_dataset_id
 
 
 def main():
 
     # Parse arguments
-    parser = argparse.ArgumentParser(description='A command-line tool to upload system '
-                                                 'to the ExplainaBoard web interface.')
-    parser.add_argument('--email', type=str, required=True,
-                        help='Email address used to sign in to ExplainaBoard')
-    parser.add_argument('--api_key', type=str, required=True,
-                        help='Your API key')
-    parser.add_argument('--task', type=str, required=True,
-                        choices=TaskType.list(),
-                        help='What task you will be analyzing')
-    parser.add_argument('--model_name', type=str, required=True,
-                        help='Name of the system that you are uploading')
-    parser.add_argument('--system_output', type=str, required=True,
-                        help='Path to the system output file')
-    parser.add_argument('--output_file_type', type=str,
-                        choices=FileType.list(),
-                        help='File type of the system output (eg text/json/tsv/conll)')
+    parser = argparse.ArgumentParser(
+        description="A command-line tool to upload system "
+        "to the ExplainaBoard web interface."
+    )
+    parser.add_argument(
+        "--email",
+        type=str,
+        required=True,
+        help="Email address used to sign in to ExplainaBoard",
+    )
+    parser.add_argument("--api_key", type=str, required=True, help="Your API key")
+    parser.add_argument(
+        "--task",
+        type=str,
+        required=True,
+        choices=TaskType.list(),
+        help="What task you will be analyzing",
+    )
+    parser.add_argument(
+        "--model_name",
+        type=str,
+        required=True,
+        help="Name of the system that you are uploading",
+    )
+    parser.add_argument(
+        "--system_output",
+        type=str,
+        required=True,
+        help="Path to the system output file",
+    )
+    parser.add_argument(
+        "--output_file_type",
+        type=str,
+        choices=FileType.list(),
+        help="File type of the system output (eg text/json/tsv/conll)",
+    )
     dataset_group = parser.add_mutually_exclusive_group(required=True)
-    dataset_group.add_argument('--dataset', type=str,
-                               help='A dataset name from DataLab')
-    parser.add_argument('--sub_dataset', type=str, required=False,
-                        help='A sub-dataset name from DataLab')
-    parser.add_argument('--split', type=str, required=False, default='test',
-                        help='The name of the dataset split to process')
-    dataset_group.add_argument('--custom_dataset', type=str,
-                               help='The path to a custom dataset file')
-    parser.add_argument('--custom_dataset_file_type', type=str, required=False,
-                        choices=FileType.list(),
-                        help='File type of the custom dataset (eg text/json/tsv/conll)')
-    parser.add_argument('--metric_names', type=str, nargs='+', required=False,
-                        help='The metrics to compute, leave blank for task defaults')
-    parser.add_argument('--source_language', type=str,
-                        help='The language on the input side')
-    parser.add_argument('--target_language', type=str,
-                        help='The language on the output side')
-    parser.add_argument('--public', action='store_true',
-                        help='Make the uploaded system public')
-    parser.add_argument('--server', type=str, required=False, default='main',
-                        choices=['main', 'staging', 'local'],
-                        help='Which server to upload to, "main" should be sufficient')
+    dataset_group.add_argument(
+        "--dataset", type=str, help="A dataset name from DataLab"
+    )
+    parser.add_argument(
+        "--sub_dataset",
+        type=str,
+        required=False,
+        help="A sub-dataset name from DataLab",
+    )
+    parser.add_argument(
+        "--split",
+        type=str,
+        required=False,
+        default="test",
+        help="The name of the dataset split to process",
+    )
+    dataset_group.add_argument(
+        "--custom_dataset", type=str, help="The path to a custom dataset file"
+    )
+    parser.add_argument(
+        "--custom_dataset_file_type",
+        type=str,
+        required=False,
+        choices=FileType.list(),
+        help="File type of the custom dataset (eg text/json/tsv/conll)",
+    )
+    parser.add_argument(
+        "--metric_names",
+        type=str,
+        nargs="+",
+        required=False,
+        help="The metrics to compute, leave blank for task defaults",
+    )
+    parser.add_argument(
+        "--source_language", type=str, help="The language on the input side"
+    )
+    parser.add_argument(
+        "--target_language", type=str, help="The language on the output side"
+    )
+    parser.add_argument(
+        "--public", action="store_true", help="Make the uploaded system public"
+    )
+    parser.add_argument(
+        "--server",
+        type=str,
+        required=False,
+        default="main",
+        choices=["main", "staging", "local"],
+        help='Which server to upload to, "main" should be sufficient',
+    )
     args = parser.parse_args()
 
     # Sanity checks
     if not (args.source_language or args.target_language):
-        raise ValueError(f'You must specify source and/or target language')
+        raise ValueError("You must specify source and/or target language")
 
     # Infer missing values
     task = TaskType(args.task)
     metric_names = args.metric_names or DEFAULT_METRICS[args.task]
     source_language = args.source_language or args.target_language
     target_language = args.target_language or args.source_language
-    output_file_type = args.output_file_type or infer_file_type(args.system_output, task)
-    custom_dataset_file_type = args.custom_dataset_file_type or infer_file_type(args.custom_dataset_file_type, task)
-    print(f'output_file_type={output_file_type}')
+    output_file_type = args.output_file_type or infer_file_type(
+        args.system_output, task
+    )
+    custom_dataset_file_type = args.custom_dataset_file_type or infer_file_type(
+        args.custom_dataset_file_type, task
+    )
+    print(f"output_file_type={output_file_type}")
 
     # Do the actual upload
     system_output = SystemOutputProps(
@@ -104,10 +159,11 @@ def main():
     result: System = client.systems_post(create_props)
     try:
         sys_id = result.system_id
-        sys = client.systems_system_id_get(sys_id)
-        print(f'successfully posted system {args.model_name} with ID {sys_id}')
-    except:
-        print(f'failed to post system {args.model_name}')
+        client.systems_system_id_get(sys_id)
+        print(f"successfully posted system {args.model_name} with ID {sys_id}")
+    except Exception:
+        print(f"failed to post system {args.model_name}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
