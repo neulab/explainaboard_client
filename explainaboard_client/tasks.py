@@ -39,27 +39,29 @@ class FileType(str, Enum):
 
 DEFAULT_METRICS: dict[TaskType,list[str]] = {
     TaskType.text_classification: ['Accuracy'],
-    TaskType.named_entity_recognition: ['BIOF1Score'],
-    TaskType.qa_extractive: ['ExactMatchQA', 'F1ScoreQA'],
-    TaskType.summarization: ['rouge1', 'rouge2', 'rougeL'],
-    TaskType.machine_translation: ['bleu'],
+    TaskType.named_entity_recognition: ['F1'],
+    TaskType.qa_extractive: ['F1', 'ExactMatch'],
+    TaskType.summarization: ['rouge1', 'rouge2', 'rougeL', 'length_ratio'],
+    TaskType.machine_translation: ['bleu', 'length_ratio'],
     TaskType.text_pair_classification: ['Accuracy'],
     TaskType.aspect_based_sentiment_classification: ['Accuracy'],
     TaskType.kg_link_tail_prediction: ['Hits', 'MRR'],
     TaskType.qa_multiple_choice: ['Accuracy'],
-    TaskType.conditional_generation: ['bleu'],
-    TaskType.word_segmentation: ['BMESF1Score'],
+    TaskType.conditional_generation: ['bleu', 'length_ratio'],
+    TaskType.word_segmentation: ['F1'],
     TaskType.language_modeling: ['LogProb'],
     TaskType.chunking: ['Accuracy'],
 }
 
 
 FILE_SUFFIX_MAP = {'txt': 'text'}
-def infer_file_type(file_path: str, task: TaskType):
+def infer_file_type(file_path: str | None, task: TaskType):
     """
     Infer the type of the file from the file path and task type. Mostly looks at the
     suffix, tries to parse json and returns json if it works, then gives up otherwise.
     """
+    if file_path is None:
+        return None
     suffix = file_path.split('.')[-1]
     type_str = FILE_SUFFIX_MAP.get(suffix,suffix)
     if type_str in FileType.list():

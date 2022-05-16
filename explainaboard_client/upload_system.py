@@ -1,7 +1,6 @@
 import argparse
-from typing import get_args
 
-from datalabs.info import PaperInfo
+from explainaboard_api_client.model.paper_info import PaperInfo
 from explainaboard_api_client.model.system import System
 from explainaboard_api_client.model.system_create_props import SystemCreateProps
 from explainaboard_api_client.model.system_metadata import SystemMetadata
@@ -53,7 +52,7 @@ def main():
     parser.add_argument('--public', action='store_true',
                         help='Make the uploaded system public')
     parser.add_argument('--server', type=str, required=False, default='main',
-                        choices=get_args(Config.environment),
+                        choices=['main', 'staging', 'local'],
                         help='Which server to upload to, "main" should be sufficient')
     args = parser.parse_args()
 
@@ -68,6 +67,7 @@ def main():
     target_language = args.target_language or args.source_language
     output_file_type = args.output_file_type or infer_file_type(args.system_output, task)
     custom_dataset_file_type = args.custom_dataset_file_type or infer_file_type(args.custom_dataset_file_type, task)
+    print(f'output_file_type={output_file_type}')
 
     # Do the actual upload
     system_output = SystemOutputProps(
