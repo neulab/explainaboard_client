@@ -40,7 +40,7 @@ you can use something like the following command:
 python -m explainaboard_client.upload_system \
   --email $EB_EMAIL --api_key $EB_API_KEY \
   --task [TASK_ID] \
-  --model_name [MODEL_NAME] \
+  --system_name [MODEL_NAME] \
   --system_output [SYSTEM_OUTPUT] --output_file_type [FILE_TYPE] \
   --dataset [DATASET] --sub_dataset [SUB_DATASET] --split [SPLIT] \
   --source_language [SOURCE] --target_language [TARGET] \
@@ -66,7 +66,7 @@ You can also upload for custom datasets that are not supported by ExplainaBoard 
 python -m explainaboard_client.upload_system \
   --email $EB_EMAIL --api_key $EB_API_KEY \
   --task [TASK_ID] \
-  --model_name [MODEL_NAME] \
+  --system_name [MODEL_NAME] \
   --system_output [SYSTEM_OUTPUT] --output_file_type [FILE_TYPE] \
   --custom_dataset [CUSTOM_DATASET] --custom_dataset_file_type [FILE_TYPE] \
   --source_language [SOURCE] --target_language [TARGET]

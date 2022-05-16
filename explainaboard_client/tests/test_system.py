@@ -21,7 +21,7 @@ class TestSystem(TestEndpointsE2E):
         metadata = SystemMetadata(
             task="text-classification",
             is_private=True,
-            model_name="test_cli",
+            system_name="test_cli",
             metric_names=["Accuracy"],
             source_language="en",
             target_language="en",
@@ -46,7 +46,7 @@ class TestSystem(TestEndpointsE2E):
         metadata = SystemMetadata(
             task="text-classification",
             is_private=True,
-            model_name="test_cli",
+            system_name="test_cli",
             metric_names=["Accuracy"],
             source_language="en",
             target_language="en",

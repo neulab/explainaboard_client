@@ -37,7 +37,7 @@ def main():
         help="What task you will be analyzing",
     )
     parser.add_argument(
-        "--model_name",
+        "--system_name",
         type=str,
         required=True,
         help="Name of the system that you are uploading",
@@ -132,7 +132,7 @@ def main():
     metadata = SystemMetadata(
         task=args.task,
         is_private=not args.public,
-        model_name=args.model_name,
+        system_name=args.system_name,
         metric_names=metric_names,
         source_language=source_language,
         target_language=target_language,
@@ -160,9 +160,9 @@ def main():
     try:
         sys_id = result.system_id
         client.systems_system_id_get(sys_id)
-        print(f"successfully posted system {args.model_name} with ID {sys_id}")
+        print(f"successfully posted system {args.system_name} with ID {sys_id}")
     except Exception:
-        print(f"failed to post system {args.model_name}")
+        print(f"failed to post system {args.system_name}")
 
 
 if __name__ == "__main__":
