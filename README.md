@@ -43,7 +43,8 @@ python -m explainaboard_client.upload_system \
   --model_name [MODEL_NAME] \
   --system_output [SYSTEM_OUTPUT] --output_file_type [FILE_TYPE] \
   --dataset [DATASET] --sub_dataset [SUB_DATASET] --split [SPLIT] \
-  --source_language [SOURCE] --target_language [TARGET]
+  --source_language [SOURCE] --target_language [TARGET] \
+  [--public]
 ```
 
 You will need to fill in all the settings appropriately, for example:
@@ -56,6 +57,8 @@ You will need to fill in all the settings appropriately, for example:
 * `[SOURCE]` and `[TARGET]` language indicate the language of the input and output of
   the system. If the inputs and outputs are the in the same language you only need to
   specify one or the other.
+* By default your systems will be private, but if you add the `--public` flag they
+  will be made public on the public leaderboards and system listing.
 
 You can also upload for custom datasets that are not supported by ExplainaBoard yet:
 
