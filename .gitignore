@@ -1,5 +1,6 @@
 __pycache__
 .vscode
+.idea
 *.egg-info
 build
 .DS_Store

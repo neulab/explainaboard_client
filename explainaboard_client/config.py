@@ -13,16 +13,16 @@ class Config:
 
     user_email: str
     api_key: str
-    environment: Literal["prod", "staging", "local"] = "prod"
+    environment: Literal["main", "staging", "local"] = "main"
     host: Optional[str] = None
 
     def __post_init__(self):
-        if self.environment not in {"prod", "staging", "local"}:
+        if self.environment not in {"main", "staging", "local"}:
             raise ValueError(f"{self.environment} is not a valid environment")
 
     def to_client_config(self):
         client_config = Configuration()
-        if self.environment == "prod":
+        if self.environment == "main":
             client_config.host = "https://explainaboard.inspiredco.ai/api"
         elif self.environment == "staging":
             client_config.host = "https://dev.explainaboard.inspiredco.ai/api"

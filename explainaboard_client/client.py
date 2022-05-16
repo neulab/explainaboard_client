@@ -28,7 +28,7 @@ class ExplainaboardClient(DefaultApi):
     ) -> Union[System, ApplyResult]:
         loaded_system_output = SystemOutputProps(
             data=encode_file_to_base64(system_create_props.system_output.data),
-            file_type="text",
+            file_type=system_create_props.system_output.file_type,
         )
         if "custom_dataset" in system_create_props:
             custom_dataset = SystemOutputProps(
