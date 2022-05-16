@@ -1,6 +1,6 @@
 import argparse
+import json
 
-from explainaboard_api_client.model.paper_info import PaperInfo
 from explainaboard_api_client.model.system import System
 from explainaboard_api_client.model.system_create_props import SystemCreateProps
 from explainaboard_api_client.model.system_metadata import SystemMetadata
@@ -95,7 +95,13 @@ def main():
         "--target_language", type=str, help="The language on the output side"
     )
     parser.add_argument(
+        "--system_details", type=str, help="File of system details in JSON format"
+    )
+    parser.add_argument(
         "--public", action="store_true", help="Make the uploaded system public"
+    )
+    parser.add_argument(
+        "--shared_users", type=str, nargs="+", help="Emails of users to share with"
     )
     parser.add_argument(
         "--server",
@@ -124,6 +130,12 @@ def main():
     )
     print(f"output_file_type={output_file_type}")
 
+    # Read system details file
+    system_details = None
+    if args.system_details:
+        with open(args.system_details, "r") as fin:
+            system_details = json.load(fin)
+
     # Do the actual upload
     system_output = SystemOutputProps(
         data=args.system_output,
@@ -138,7 +150,8 @@ def main():
         target_language=target_language,
         dataset_metadata_id=generate_dataset_id(args.dataset, args.sub_dataset),
         dataset_split=args.split,
-        paper_info=PaperInfo(),  # all attributes are optional
+        shared_users=" ".join(args.shared_users),
+        system_details=system_details,
     )
     custom_dataset = None
     if args.custom_dataset:
