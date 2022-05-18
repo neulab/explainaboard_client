@@ -128,10 +128,10 @@ def main():
     custom_dataset_file_type = args.custom_dataset_file_type or infer_file_type(
         args.custom_dataset_file_type, task
     )
-    print(f"output_file_type={output_file_type}")
+    shared_users = args.shared_users or []
 
     # Read system details file
-    system_details = None
+    system_details = {}
     if args.system_details:
         with open(args.system_details, "r") as fin:
             system_details = json.load(fin)
@@ -150,7 +150,7 @@ def main():
         target_language=target_language,
         dataset_metadata_id=generate_dataset_id(args.dataset, args.sub_dataset),
         dataset_split=args.split,
-        shared_users=" ".join(args.shared_users),
+        shared_users=shared_users,
         system_details=system_details,
     )
     custom_dataset = None

@@ -26,7 +26,7 @@ class TestSystem(TestEndpointsE2E):
             target_language="en",
             dataset_metadata_id=generate_dataset_id("sst2", None),
             dataset_split="test",
-            shared_users="explainaboard@gmail.com",
+            shared_users=["explainaboard@gmail.com"],
             system_details={"hello": "world"},
         )
         create_props = SystemCreateProps(
@@ -51,7 +51,7 @@ class TestSystem(TestEndpointsE2E):
             source_language="en",
             target_language="en",
             dataset_split="test",
-            shared_users="explainaboard@gmail.com",
+            shared_users=["explainaboard@gmail.com"],
             system_details={"hello": "world"},
         )
         custom_dataset = SystemOutputProps(
