@@ -6,7 +6,7 @@ from version import __version__
 setup(
     name="explainaboard_client",
     version=__version__,
-    description="Explainable Client",
+    description="ExplainaBoard Client",
     long_description=codecs.open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/neulab/explainaboard_client",
@@ -24,7 +24,7 @@ setup(
     entry_points={
         "console_scripts": [],
     },
-    install_requires=["explainaboard_api_client"],
+    install_requires=["explainaboard_api_client>=0.1.3"],
     extras_require={
         "dev": [
             "pre-commit",

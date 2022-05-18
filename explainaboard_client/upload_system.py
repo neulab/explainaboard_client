@@ -1,6 +1,6 @@
 import argparse
+import json
 
-from explainaboard_api_client.model.paper_info import PaperInfo
 from explainaboard_api_client.model.system import System
 from explainaboard_api_client.model.system_create_props import SystemCreateProps
 from explainaboard_api_client.model.system_metadata import SystemMetadata
@@ -37,7 +37,7 @@ def main():
         help="What task you will be analyzing",
     )
     parser.add_argument(
-        "--model_name",
+        "--system_name",
         type=str,
         required=True,
         help="Name of the system that you are uploading",
@@ -95,7 +95,13 @@ def main():
         "--target_language", type=str, help="The language on the output side"
     )
     parser.add_argument(
+        "--system_details", type=str, help="File of system details in JSON format"
+    )
+    parser.add_argument(
         "--public", action="store_true", help="Make the uploaded system public"
+    )
+    parser.add_argument(
+        "--shared_users", type=str, nargs="+", help="Emails of users to share with"
     )
     parser.add_argument(
         "--server",
@@ -122,7 +128,13 @@ def main():
     custom_dataset_file_type = args.custom_dataset_file_type or infer_file_type(
         args.custom_dataset_file_type, task
     )
-    print(f"output_file_type={output_file_type}")
+    shared_users = args.shared_users or []
+
+    # Read system details file
+    system_details = {}
+    if args.system_details:
+        with open(args.system_details, "r") as fin:
+            system_details = json.load(fin)
 
     # Do the actual upload
     system_output = SystemOutputProps(
@@ -132,13 +144,14 @@ def main():
     metadata = SystemMetadata(
         task=args.task,
         is_private=not args.public,
-        model_name=args.model_name,
+        system_name=args.system_name,
         metric_names=metric_names,
         source_language=source_language,
         target_language=target_language,
         dataset_metadata_id=generate_dataset_id(args.dataset, args.sub_dataset),
         dataset_split=args.split,
-        paper_info=PaperInfo(),  # all attributes are optional
+        shared_users=shared_users,
+        system_details=system_details,
     )
     custom_dataset = None
     if args.custom_dataset:
@@ -160,9 +173,9 @@ def main():
     try:
         sys_id = result.system_id
         client.systems_system_id_get(sys_id)
-        print(f"successfully posted system {args.model_name} with ID {sys_id}")
+        print(f"successfully posted system {args.system_name} with ID {sys_id}")
     except Exception:
-        print(f"failed to post system {args.model_name}")
+        print(f"failed to post system {args.system_name}")
 
 
 if __name__ == "__main__":

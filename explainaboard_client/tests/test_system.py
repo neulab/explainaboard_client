@@ -1,7 +1,6 @@
 import os
 
 from explainaboard_api_client.models import (
-    PaperInfo,
     System,
     SystemCreateProps,
     SystemMetadata,
@@ -21,13 +20,14 @@ class TestSystem(TestEndpointsE2E):
         metadata = SystemMetadata(
             task="text-classification",
             is_private=True,
-            model_name="test_cli",
+            system_name="test_cli",
             metric_names=["Accuracy"],
             source_language="en",
             target_language="en",
             dataset_metadata_id=generate_dataset_id("sst2", None),
             dataset_split="test",
-            paper_info=PaperInfo(),  # all attributes are optional
+            shared_users=["explainaboard@gmail.com"],
+            system_details={"hello": "world"},
         )
         create_props = SystemCreateProps(
             metadata=metadata, system_output=self._SYSTEM_OUTPUT
@@ -46,12 +46,13 @@ class TestSystem(TestEndpointsE2E):
         metadata = SystemMetadata(
             task="text-classification",
             is_private=True,
-            model_name="test_cli",
+            system_name="test_cli",
             metric_names=["Accuracy"],
             source_language="en",
             target_language="en",
             dataset_split="test",
-            paper_info=PaperInfo(),  # all attributes are optional
+            shared_users=["explainaboard@gmail.com"],
+            system_details={"hello": "world"},
         )
         custom_dataset = SystemOutputProps(
             data=os.path.join(test_artifacts_path, "sst2-dataset.tsv"),
