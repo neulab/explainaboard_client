@@ -82,8 +82,10 @@ be happy to help out!
 using the following syntax
 ```
 python -m explainaboard_client.cli.find_systems \
-  --email $EB_EMAIL --api_key $EB_API_KEY > system_list.json
+  --email $EB_EMAIL --api_key $EB_API_KEY --output_format tsv
 ```
+By default this outputs in a summarized TSV format (similar to the online system
+browser), but you can set `--output_format json` to get more extensive information.
 There are many options for how you can specify which systems you want to find, which you
 can take a look at by running `python -m explainaboard_client.cli.find_systems` without
 any arguments.

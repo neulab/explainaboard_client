@@ -2,6 +2,7 @@ import argparse
 import json
 import traceback
 
+from explainaboard_api_client.model.system import System
 from explainaboard_api_client.model.systems_return import SystemsReturn
 from explainaboard_client import Config, ExplainaboardClient
 from explainaboard_client.utils import sanitize_for_json
@@ -67,7 +68,14 @@ def main():
         nargs="+",
         help="Emails of users with which the system is shared",
     )
-    # ---- Page settings
+    # ---- Display settings
+    parser.add_argument(
+        "--output_format",
+        type=str,
+        default="tsv",
+        choices=["tsv", "json"],
+        help="What format to output in",
+    )
     parser.add_argument(
         "--page",
         type=int,
@@ -104,12 +112,57 @@ def main():
     kwargs: dict = {
         k: v
         for k, v in vars(args).items()
-        if (v is not None and k not in {"email", "api_key", "server"})
+        if (v is not None and k not in {"email", "api_key", "server", "output_format"})
     }
     try:
         systems: SystemsReturn = client.systems_get(**kwargs)
-        systems_dict = sanitize_for_json(systems.to_dict())
-        print(json.dumps(systems_dict, indent=2))
+        system_list: list[System] = [
+            sanitize_for_json(x.to_dict()) for x in systems.systems
+        ]
+        if args.output_format == "json":
+            print(json.dumps(system_list))
+        else:
+            # Get types of metrics
+            metric_names = set()
+            for system in system_list:
+                metric_names = metric_names.union(
+                    system["system_info"]["results"]["overall"].keys()
+                )
+            metric_list = list(metric_names)
+            # Print headings
+            headings = [
+                "ID",
+                "Name",
+                "Task",
+                "Dataset",
+                "Sub-dataset",
+                "Split",
+                "Input Language",
+                "Output Language",
+                "Creator",
+                "Created At",
+            ] + metric_list
+            print("\t".join(headings))
+            for system in system_list:
+                metrics = [
+                    system["system_info"]["results"]["overall"].get(x, None)
+                    for x in metric_list
+                ]
+                metric_strs = [str(x["value"]) if x else "" for x in metrics]
+                system_data = [
+                    system["system_id"],
+                    system["system_info"]["system_name"],
+                    system["system_info"]["task_name"],
+                    system["system_info"]["dataset_name"],
+                    system["system_info"].get("sub_dataset_name", ""),
+                    system["system_info"]["dataset_split"],
+                    system["system_info"]["source_language"],
+                    system["system_info"]["target_language"],
+                    system["creator"],
+                    system["created_at"],
+                ] + metric_strs
+                print("\t".join(system_data))
+
     except Exception:
         traceback.print_exc()
         print("failed to query systems")
