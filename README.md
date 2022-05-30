@@ -29,15 +29,15 @@ export EB_API_KEY="[your API key]"
 
 ## Usage
 
-### Uploading Systems from the Command Line
+### Uploading/Browsing/Deleting Systems from the Command Line
 
-The most common usage of this API will probably be to upload systems. You can do that
-from the command line. If you are using a pre-existing dataset viewable from the
-[ExplainaBoard datasets](https://explainaboard.inspiredco.ai/datasets) page then
-you can use something like the following command:
+**Uploading Systems:** The most common usage of this client will probably be to upload 
+systems. You can do that from the command line. If you are using a pre-existing dataset 
+viewable from the [ExplainaBoard datasets](https://explainaboard.inspiredco.ai/datasets)
+page then you can use something like the following command:
 
 ```
-python -m explainaboard_client.upload_system \
+python -m explainaboard_client.cli.upload_system \
   --email $EB_EMAIL --api_key $EB_API_KEY \
   --task [TASK_ID] \
   --system_name [MODEL_NAME] \
@@ -60,10 +60,11 @@ You will need to fill in all the settings appropriately, for example:
 * By default your systems will be private, but if you add the `--public` flag they
   will be made public on the public leaderboards and system listing.
 
-You can also upload for custom datasets that are not supported by ExplainaBoard yet:
+**Uploading w/ Custom Datasets:** You can also upload results for custom datasets that 
+are not supported by DataLab yet:
 
 ```
-python -m explainaboard_client.upload_system \
+python -m explainaboard_client.cli.upload_system \
   --email $EB_EMAIL --api_key $EB_API_KEY \
   --task [TASK_ID] \
   --system_name [MODEL_NAME] \
@@ -76,6 +77,26 @@ with similar file and file-type arguments to the system output above. If you're
 interested in getting your datasets directly supported within ExplainaBoard, please
 open an issue or send a PR to [DataLab](https://github.com/expressai/datalab), and we'll
 be happy to help out!
+
+**Finding Uploaded Systems:** You can also find systems that have already been uploaded 
+using the following syntax
+```
+python -m explainaboard_client.cli.find_systems \
+  --email $EB_EMAIL --api_key $EB_API_KEY > system_list.json
+```
+There are many options for how you can specify which systems you want to find, which you
+can take a look at by running `python -m explainaboard_client.cli.find_systems` without
+any arguments.
+
+**Deleting System Outputs:** You can delet existing system outputs using the following
+command:
+```
+python -m explainaboard_client.cli.delete_systems \
+  --email $EB_EMAIL --api_key $EB_API_KEY --system_ids XXX YYY
+```
+Here the `system_ids` are the unique identifier of each system returned in the
+`system_id` field of the JSON returned by the `find_systems` command above. The system
+IDs are *not* the system name as displayed in the interface.
 
 ### Programmatic Usage
 
