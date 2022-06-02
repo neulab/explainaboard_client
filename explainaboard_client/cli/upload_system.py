@@ -22,6 +22,7 @@ def main():
         description="A command-line tool to upload system "
         "to the ExplainaBoard web interface."
     )
+    # ---- Authentication arguments
     parser.add_argument(
         "--email",
         type=str,
@@ -29,6 +30,15 @@ def main():
         help="Email address used to sign in to ExplainaBoard",
     )
     parser.add_argument("--api_key", type=str, required=True, help="Your API key")
+    parser.add_argument(
+        "--server",
+        type=str,
+        required=False,
+        default="main",
+        choices=["main", "staging", "local"],
+        help='Which server to upload to, "main" should be sufficient',
+    )
+    # ---- System info
     parser.add_argument(
         "--task",
         type=str,
@@ -102,14 +112,6 @@ def main():
     )
     parser.add_argument(
         "--shared_users", type=str, nargs="+", help="Emails of users to share with"
-    )
-    parser.add_argument(
-        "--server",
-        type=str,
-        required=False,
-        default="main",
-        choices=["main", "staging", "local"],
-        help='Which server to upload to, "main" should be sufficient',
     )
     args = parser.parse_args()
 

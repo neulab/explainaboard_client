@@ -24,7 +24,7 @@ setup(
     entry_points={
         "console_scripts": [],
     },
-    install_requires=["explainaboard_api_client>=0.1.3"],
+    install_requires=["explainaboard_api_client>=0.1.3", "tqdm"],
     extras_require={
         "dev": [
             "pre-commit",
