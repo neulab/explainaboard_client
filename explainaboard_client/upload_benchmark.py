@@ -96,8 +96,19 @@ def main():
         dataset_split = dataset_info["dataset_split"]
         metric_names = [metric_dict["name"] for metric_dict in dataset_info["metrics"]]
         task = dataset_info["task"]
-        source_language = "en"  # this should be obtained from benchmark config
-        target_language = "en"  # this should be obtained from benchmark config
+
+        source_language = (
+            "en"
+            if "source_language" not in dataset_info.keys()
+            else dataset_info["source_language"]
+        )
+
+        target_language = (
+            "en"
+            if "target_language" not in dataset_info.keys()
+            else dataset_info["target_language"]
+        )
+
         output_file_type = dataset_info["output_file_type"]
 
         # Do the actual upload
