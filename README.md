@@ -100,10 +100,42 @@ Here the `system_ids` are the unique identifier of each system returned in the
 `system_id` field of the JSON returned by the `find_systems` command above. The system
 IDs are *not* the system name as displayed in the interface.
 
+### Uploading Systems to Benchmarks from the Command Line
+Instead of simply uploading an individual system, another common scenario is 
+to submit a group of systems to a benchmark (e.g., GLUE). To achieve this goal,
+you can follow the command below: 
+
+```shell
+python -m explainaboard_client.upload_benchmark \
+      --email XXX  \
+      --api_key YYY \
+      --system_name your_system \
+      --system_outputs submissions/* \
+      --benchmark benchmark_config.json \
+      --server local
+```
+where
+* `--email`: the email of your explainaboard account
+* `--api_key`: your API key
+* `--system_name`: the system name of your submission. Note: this assumes that all
+system output share one system name.
+* `--benchmark`: the benchmark config file (you can check out this [doc](TBC) to see how to configure the benchmark.)
+* `system_outputs`: system output files. Note that the order of `system_outputs` files should
+strictly correspond to the dataset order of `datasets` in `benchmark_config.json`.
+* By default, your systems will be private, but if you add the `--public` flag, they
+  will be made public on the public leaderboards and system listing.
+  
+Here is one [example](./example/benchmark/gaokao/) for the `Gaokao` benchmark.
+
+
+
 ### Programmatic Usage
 
 Please see examples in `./tests`.
 We will be working on more examples and documentation shortly.
+
+
+
 
 ## Update
 
