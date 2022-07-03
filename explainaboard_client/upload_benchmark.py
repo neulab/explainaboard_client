@@ -16,7 +16,7 @@ def validate_outputs(system_outputs):
         if not os.path.basename(pth).split(".")[0].split("_")[0].isdigit():
             raise ValueError(
                 f"system output file name: {pth}  should"
-                f" start with number,"
+                f" start with a number,"
                 "for example: 8.json"
             )
     return True

@@ -100,7 +100,7 @@ Here the `system_ids` are the unique identifier of each system returned in the
 `system_id` field of the JSON returned by the `find_systems` command above. The system
 IDs are *not* the system name as displayed in the interface.
 
-### Uploading Systems to Benchmark from the Command Line
+### Uploading Systems to Benchmarks from the Command Line
 Instead of simply uploading an individual system, another common scenario is 
 to submit a group of systems to a benchmark (e.g., GLUE). To achieve this goal,
 you can follow the command below: 
@@ -125,7 +125,7 @@ strictly correspond to the dataset order of `datasets` in `benchmark_config.json
 * By default, your systems will be private, but if you add the `--public` flag, they
   will be made public on the public leaderboards and system listing.
   
-Here is one [example](./example/benchmark/gaokao/) for `Gaokao` benchmark.
+Here is one [example](./example/benchmark/gaokao/) for the `Gaokao` benchmark.
 
 
 
