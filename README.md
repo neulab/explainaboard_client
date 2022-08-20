@@ -106,7 +106,7 @@ to submit a group of systems to a benchmark (e.g., GLUE). To achieve this goal,
 you can follow the command below: 
 
 ```shell
-python -m explainaboard_client.upload_benchmark \
+python -m explainaboard_client.cli.upload_benchmark \
       --email XXX  \
       --api_key YYY \
       --system_name your_system \

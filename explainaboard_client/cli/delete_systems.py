@@ -58,7 +58,7 @@ def main():
         for system_id in tqdm(args.system_ids, desc="retrieving system info"):
             kwargs = {"system_id": system_id}
             try:
-                system: SystemsReturn = client.systems_system_id_get(**kwargs)
+                system: SystemsReturn = client.systems_get_by_id(**kwargs)
                 system_dict = system.to_dict()
                 system_strs.append(
                     f"id={system_id}, "
@@ -81,7 +81,7 @@ def main():
                 print("Did not receive confirmation")
                 return
         for system_id in args.system_ids:
-            client.systems_system_id_delete(system_id)
+            client.systems_delete_by_id(system_id)
         print(f"Deleted {len(system_strs)} systems")
     except Exception:
         traceback.print_exc()
