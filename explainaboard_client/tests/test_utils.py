@@ -19,7 +19,7 @@ test_artifacts_path: Final = os.path.join(
 
 class TestEndpointsE2E(TestCase):
     def setUp(self):
-        self._client = ExplainaboardClient(TEST_CONFIG)
+        self._client: ExplainaboardClient = ExplainaboardClient(TEST_CONFIG)
 
     def tearDown(self) -> None:
         self._client.close()
