@@ -143,7 +143,7 @@ def main():
         result: System = client.systems_post(create_props)
         try:
             sys_id = result.system_id
-            client.systems_system_id_get(sys_id)
+            client.systems_get_by_id(sys_id)
             print(f"successfully posted system {args.system_name} with ID {sys_id}")
         except Exception:
             print(f"failed to post system {args.system_name}")

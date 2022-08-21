@@ -33,14 +33,14 @@ class TestSystem(TestEndpointsE2E):
             metadata=metadata, system_output=self._SYSTEM_OUTPUT
         )
         result: System = self._client.systems_post(create_props)
+        sys_id = result.system_id
         try:
-            sys_id = result.system_id
-            sys = self._client.systems_system_id_get(sys_id)
+            sys = self._client.systems_get_by_id(sys_id)
             self.assertIn("dataset", sys)
             self.assertIn("system_info", sys)
 
         finally:  # cleanup
-            self._client.systems_system_id_delete(sys_id)
+            self._client.systems_delete_by_id(sys_id)
 
     def test_custom_dataset(self):
         metadata = SystemMetadata(
@@ -67,4 +67,4 @@ class TestSystem(TestEndpointsE2E):
 
         # cleanup
         sys_id = result.system_id
-        self._client.systems_system_id_delete(sys_id)
+        self._client.systems_delete_by_id(sys_id)

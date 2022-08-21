@@ -1,5 +1,5 @@
 
-python -m explainaboard_client.upload_benchmark \
+python -m explainaboard_client.cli.upload_benchmark \
       --email YOUR_EMAIL  \
       --api_key YOUR_API_KEY \
       --system_name MODEL_NAME \
