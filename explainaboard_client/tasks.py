@@ -15,10 +15,19 @@ class TaskType(str, Enum):
     aspect_based_sentiment_classification = "aspect-based-sentiment-classification"
     kg_link_tail_prediction = "kg-link-tail-prediction"
     qa_multiple_choice = "qa-multiple-choice"
+    qa_open_domain = "qa-open-domain"
+    qa_tat = "qa-tat"
     conditional_generation = "conditional-generation"
     word_segmentation = "word-segmentation"
     language_modeling = "language-modeling"
     chunking = "chunking"
+    cloze_mutiple_choice = "cloze-multiple-choice"
+    cloze_generative = "cloze-generative"
+    grammatical_error_correction = "grammatical-error-correction"
+    nlg_meta_evaluation = "nlg-meta-evaluation"
+    tabular_regression = "tabular-regression"
+    tabular_classification = "tabular-classification"
+    argument_pair_extraction = "argument-pair-extraction"
 
     @staticmethod
     def list():
@@ -51,12 +60,19 @@ DEFAULT_METRICS: dict[TaskType, list[str]] = {
     TaskType.aspect_based_sentiment_classification: ["Accuracy"],
     TaskType.kg_link_tail_prediction: ["Hits", "MRR"],
     TaskType.qa_multiple_choice: ["Accuracy"],
+    TaskType.qa_tat: ["QATatExactMatch", "QATatF1"],
     TaskType.conditional_generation: ["bleu", "length_ratio"],
     TaskType.word_segmentation: ["F1"],
     TaskType.language_modeling: ["LogProb"],
     TaskType.chunking: ["Accuracy"],
+    TaskType.cloze_mutiple_choice: ["Accuracy", "CorrectCpount"],
+    TaskType.cloze_generative: ["CorrectCount"],
+    TaskType.grammatical_error_correction: ["SeqCorrectCount"],
+    TaskType.nlg_meta_evaluation: ["SegKtauCorr", "SysPearsonCorr"],
+    TaskType.tabular_regression: ["RMSE", "AbsoluteError"],
+    TaskType.tabular_classification: ["Accuracy"],
+    TaskType.argument_pair_extraction: ["F1"],
 }
-
 
 FILE_SUFFIX_MAP = {"txt": "text"}
 
