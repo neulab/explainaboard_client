@@ -67,6 +67,7 @@ DEFAULT_METRICS: dict[TaskType, list[str]] = {
         "MRR",
     ],
     TaskType.qa_multiple_choice: ["Accuracy"],
+    TaskType.qa_open_domain: ["ExactMatch", "F1"],
     TaskType.qa_tat: ["QATatExactMatch", "QATatF1"],
     TaskType.conditional_generation: ["bleu", "length_ratio"],
     TaskType.word_segmentation: ["F1"],
