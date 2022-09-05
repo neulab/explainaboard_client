@@ -10,7 +10,7 @@ This is a command line and API client that makes it easy for you to upload syste
 - For CLI/api users
     - `pip install explainaboard_client`
 - For explainaboard client developers
-    - `pip install .`
+    - `pip install ".[dev]"`
 
 ### Acquiring a Login and API Key
 
@@ -48,7 +48,7 @@ python -m explainaboard_client.cli.upload_system \
 ```
 
 You will need to fill in all the settings appropriately, for example:
-* `[TASK_ID]` is the ID of the task you want to perform. A full list is [here](https://github.com/neulab/explainaboard_client/blob/main/docs/tasks.py).
+* `[TASK_ID]` is the ID of the task you want to perform. A full list is [here](https://github.com/neulab/explainaboard_web/blob/main/backend/src/impl/tasks.py).
 * `[MODEL_NAME]` is whatever name you want to give to your model.
 * `[SYSTEM_OUTPUT]` is the file that you want to upload.
 * `[FILE_TYPE]` is the type of the file, "text", "tsv", "csv", "conll", or "json".

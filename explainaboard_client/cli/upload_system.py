@@ -150,7 +150,6 @@ def main():
         metric_names=metric_names,
         source_language=source_language,
         target_language=target_language,
-        dataset_metadata_id=generate_dataset_id(args.dataset, args.sub_dataset),
         dataset_split=args.split,
         shared_users=shared_users,
         system_details=system_details,
@@ -161,8 +160,12 @@ def main():
             data=args.custom_dataset,
             file_type=custom_dataset_file_type,
         )
+    else:
+        metadata.dataset_metadata_id = (
+            generate_dataset_id(args.dataset, args.sub_dataset),
+        )
     create_props = SystemCreateProps(
-        metadata=metadata, system_output=system_output, custom_datset=custom_dataset
+        metadata=metadata, system_output=system_output, custom_dataset=custom_dataset
     )
     client_config = Config(
         args.email,
