@@ -4,7 +4,6 @@ from typing import Any, Optional
 
 
 def encode_file_to_base64(path: str) -> str:
-    print(path)
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode("utf-8")
 
