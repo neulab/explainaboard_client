@@ -11,6 +11,11 @@ def encode_file_to_base64(path: str) -> str:
 
 def generate_dataset_id(dataset_name: str, sub_dataset: Optional[str]) -> str:
     """HACK probably shouldn't expose this logic to the users"""
+    if not dataset_name:
+        raise ValueError(
+            "dataset_name cannot be None or empty. If you are "
+            "using a custom dataset, please remove the dataset argument."
+        )
     sub_dataset = sub_dataset if sub_dataset else "None"
     return f"{dataset_name}---{sub_dataset}"
 

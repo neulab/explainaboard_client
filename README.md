@@ -10,7 +10,7 @@ This is a command line and API client that makes it easy for you to upload syste
 - For CLI/api users
     - `pip install explainaboard_client`
 - For explainaboard client developers
-    - `pip install .`
+    - `pip install ".[dev]"`
 
 ### Acquiring a Login and API Key
 
