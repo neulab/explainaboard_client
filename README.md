@@ -54,8 +54,8 @@ You will need to fill in all the settings appropriately, for example:
 * `[FILE_TYPE]` is the type of the file, "text", "tsv", "csv", "conll", or "json".
 * `[DATASET]`, `[SUB_DATASET]` and `[SPLIT]` indicate which dataset you're uploading
   a system output for.
-* `[SOURCE]` and `[TARGET]` language indicate the language of the input and output of
-  the system. If the inputs and outputs are the in the same language you only need to
+* `[SOURCE]` and `[TARGET]` language indicate the language code of the input and output of
+  the system. Please refer to the [ISO-639-3](https://iso639-3.sil.org/code_tables/639/data) list for the 3-character 693-3 language codes. Enter `other-[your custom languages]` if the dataset uses custom languages. Enter `none` if the dataset uses other modalities like images. If the inputs and outputs are the in the same language you only need to
   specify one or the other.
 * By default your systems will be private, but if you add the `--public` flag they
   will be made public on the public leaderboards and system listing.
