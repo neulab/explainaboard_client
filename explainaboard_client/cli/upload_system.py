@@ -178,7 +178,11 @@ def main():
     try:
         sys_id = result.system_id
         client.systems_get_by_id(sys_id)
-        print(f"successfully posted system {args.system_name} with ID {sys_id}")
+        frontend = client_config.get_env_host_map()[args.server].frontend
+        print(
+            f"successfully posted system {args.system_name} with ID {sys_id}\n"
+            f"view it at {frontend}/systems?system_id={sys_id}\n"
+        )
     except Exception:
         print(f"failed to post system {args.system_name}")
 
