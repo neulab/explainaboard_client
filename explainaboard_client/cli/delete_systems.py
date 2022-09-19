@@ -29,7 +29,7 @@ def main():
         required=False,
         default="main",
         choices=["main", "staging", "local"],
-        help='Which server to upload to, "main" should be sufficient',
+        help='Which server to use, "main" should be sufficient',
     )
     # --- Query arguments
     parser.add_argument(

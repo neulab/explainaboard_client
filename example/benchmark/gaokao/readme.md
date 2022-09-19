@@ -15,7 +15,7 @@ datasets of this benchmark.
 ## Command
 
 ```shell
-python -m explainaboard_client.cli.upload_benchmark \
+python -m explainaboard_client.cli.evaluate_benchmark \
       --email XXX  \
       --api_key YYY \
       --system_name my_system \
