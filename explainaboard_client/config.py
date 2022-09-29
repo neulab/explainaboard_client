@@ -1,7 +1,34 @@
+from __future__ import annotations
+
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Literal, Optional
 
 from explainaboard_api_client import Configuration
+
+
+@dataclass
+class HostConfig:
+    host: Optional[str] = None
+    frontend: Optional[str] = None
+
+
+ENV_HOST_MAP: defaultdict[str, HostConfig] = defaultdict(
+    HostConfig,
+    {
+        "main": HostConfig(
+            host="https://explainaboard.inspiredco.ai/api",
+            frontend="https://explainaboard.inspiredco.ai",
+        ),
+        "staging": HostConfig(
+            host="https://dev.explainaboard.inspiredco.ai/api",
+            frontend="https://dev.explainaboard.inspiredco.ai",
+        ),
+        "local": HostConfig(
+            host="http://localhost:5000/api", frontend="http://localhost:3000"
+        ),
+    },
+)
 
 
 @dataclass
@@ -20,14 +47,13 @@ class Config:
         if self.environment not in {"main", "staging", "local"}:
             raise ValueError(f"{self.environment} is not a valid environment")
 
+    @staticmethod
+    def get_env_host_map():
+        return ENV_HOST_MAP
+
     def to_client_config(self):
         client_config = Configuration()
-        if self.environment == "main":
-            client_config.host = "https://explainaboard.inspiredco.ai/api"
-        elif self.environment == "staging":
-            client_config.host = "https://dev.explainaboard.inspiredco.ai/api"
-        elif self.environment == "local":
-            client_config.host = "http://localhost:5000/api"
+        client_config.host = ENV_HOST_MAP[self.environment].host
 
         if self.host:
             client_config.host = self.host
