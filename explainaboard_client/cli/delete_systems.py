@@ -60,11 +60,18 @@ def main():
             try:
                 system: SystemsReturn = client.systems_get_by_id(**kwargs)
                 system_dict = system.to_dict()
+
+                dataset = system_dict["system_info"].get(
+                    "dataset_name", "custom dataset"
+                )
+                subdataset = system_dict["system_info"].get(
+                    "sub_dataset_name", "custom dataset"
+                )
                 system_strs.append(
                     f"id={system_id}, "
                     f'name={system_dict["system_info"]["system_name"]}, '
-                    f'dataset={system_dict["system_info"]["dataset_name"]}, '
-                    f'subdataset={system_dict["system_info"]["sub_dataset_name"]}, '
+                    f"dataset={dataset}, "
+                    f"subdataset={subdataset}, "
                     f'created_at={str(system_dict["created_at"])}'
                 )
             except ApiException:

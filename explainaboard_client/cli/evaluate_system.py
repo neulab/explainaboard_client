@@ -19,8 +19,8 @@ def main():
 
     # Parse arguments
     parser = argparse.ArgumentParser(
-        description="A command-line tool to evaluate a system through "
-        "the ExplainaBoard web interface."
+        description="A command-line tool to evaluate system "
+        "to the ExplainaBoard web interface."
     )
     # ---- Authentication arguments
     parser.add_argument(
@@ -178,10 +178,10 @@ def main():
     try:
         sys_id = result.system_id
         client.systems_get_by_id(sys_id)
-        print(f"evaluated system {args.system_name} with ID {sys_id}")
+        frontend = client_config.get_env_host_map()[args.server].frontend
+        print(
+            f"successfully evaluated system {args.system_name} with ID {sys_id}\n"
+            f"view it at {frontend}/systems?system_id={sys_id}\n"
+        )
     except Exception:
         print(f"failed to evaluate system {args.system_name}")
-
-
-if __name__ == "__main__":
-    main()
