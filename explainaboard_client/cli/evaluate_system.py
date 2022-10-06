@@ -161,12 +161,19 @@ def main():
             file_type=custom_dataset_file_type,
         )
     else:
-        metadata.dataset_metadata_id = (
-            generate_dataset_id(args.dataset, args.sub_dataset),
+        metadata.dataset_metadata_id = generate_dataset_id(
+            args.dataset, args.sub_dataset
         )
-    create_props = SystemCreateProps(
-        metadata=metadata, system_output=system_output, custom_dataset=custom_dataset
+    create_props = (
+        SystemCreateProps(
+            metadata=metadata,
+            system_output=system_output,
+            custom_dataset=custom_dataset,
+        )
+        if custom_dataset is not None
+        else SystemCreateProps(metadata=metadata, system_output=system_output)
     )
+
     client_config = Config(
         args.email,
         args.api_key,
