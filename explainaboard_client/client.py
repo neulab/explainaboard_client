@@ -232,6 +232,26 @@ class ExplainaboardClient:
 
         return result.to_dict()
 
+    def get_system(self, system_id: str) -> dict:
+        """Get a single system by the system ID.
+
+        Args:
+            system_id: The system ID.
+
+        Returns:
+            A dictionary of information about the system.
+        """
+        result: System = self._default_api.systems_get_by_id(system_id)
+        return result.to_dict()
+
+    def delete_system(self, system_id: str) -> None:
+        """Delete a single system.
+
+        Args:
+            system_id: The system ID.
+        """
+        self._default_api.systems_delete_by_id(system_id)
+
     # --- Pass-through API calls that will be deprecated
     def systems_post(
         self, system_create_props: SystemCreateProps, **kwargs
@@ -266,10 +286,18 @@ class ExplainaboardClient:
 
     def systems_get_by_id(self, system_id: str, **kwargs):
         """API call to get systems. Will be replaced in the future."""
+        logging.getLogger("explainaboard_client").warning(
+            "WARNING: systems_get_by_id() is deprecated and may be removed in the"
+            " future. Please use get_system() instead."
+        )
         return self._default_api.systems_get_by_id(system_id, **kwargs)
 
     def systems_delete_by_id(self, system_id: str, **kwargs):
         """API call to delete systems. Will be replaced in the future."""
+        logging.getLogger("explainaboard_client").warning(
+            "WARNING: systems_delete_by_id() is deprecated and may be removed in the"
+            " future. Please use delete_system() instead."
+        )
         self._default_api.systems_delete_by_id(system_id, **kwargs)
 
     def systems_get(self, **kwargs):

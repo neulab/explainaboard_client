@@ -22,11 +22,11 @@ class TestSystem(TestEndpointsE2E):
         )
         sys_id = result["system_id"]
         try:
-            sys = self._client.systems_get_by_id(sys_id)
+            sys = self._client.get_system(sys_id)
             self.assertIn("dataset", sys)
             self.assertIn("system_info", sys)
         finally:  # cleanup
-            self._client.systems_delete_by_id(sys_id)
+            self._client.delete_system(sys_id)
 
     def test_evaluate_system_file_custom(self):
         result: dict = self._client.evaluate_system_file(
@@ -44,7 +44,7 @@ class TestSystem(TestEndpointsE2E):
         )
         # cleanup
         sys_id = result["system_id"]
-        self._client.systems_delete_by_id(sys_id)
+        self._client.delete_system(sys_id)
 
     def test_evaluate_system_datalab(self):
         with open(self._SYSTEM_OUTPUT, "r") as fin:
@@ -63,11 +63,11 @@ class TestSystem(TestEndpointsE2E):
         )
         sys_id = result["system_id"]
         try:
-            sys = self._client.systems_get_by_id(sys_id)
+            sys = self._client.get_system(sys_id)
             self.assertIn("dataset", sys)
             self.assertIn("system_info", sys)
         finally:  # cleanup
-            self._client.systems_delete_by_id(sys_id)
+            self._client.delete_system(sys_id)
 
     def test_evaluate_system_custom(self):
         with open(self._SYSTEM_OUTPUT, "r") as fin:
@@ -91,7 +91,7 @@ class TestSystem(TestEndpointsE2E):
         )
         sys_id = result["system_id"]
         try:
-            sys = self._client.systems_get_by_id(sys_id)
+            sys = self._client.get_system(sys_id)
             self.assertIn("system_info", sys)
         finally:  # cleanup
-            self._client.systems_delete_by_id(sys_id)
+            self._client.delete_system(sys_id)
