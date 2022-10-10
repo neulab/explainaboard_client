@@ -3,23 +3,25 @@ import json
 import os
 import time
 
-from explainaboard_api_client.model.system import System
-from explainaboard_api_client.model.system_create_props import SystemCreateProps
-from explainaboard_api_client.model.system_metadata import SystemMetadata
-from explainaboard_api_client.model.system_output_props import SystemOutputProps
 from explainaboard_client import Config, ExplainaboardClient
-from explainaboard_client.utils import generate_dataset_id
+
+# How long to sleep between submissions
+_SLEEP_BETWEEN_SUBMISSIONS = 5
 
 
-def validate_outputs(system_outputs):
-    for pth in system_outputs:
+def _validate_and_sort_outputs(system_output_files: list[str]) -> None:
+    for pth in system_output_files:
         if not os.path.basename(pth).split(".")[0].split("_")[0].isdigit():
             raise ValueError(
                 f"system output file name: {pth}  should"
                 f" start with a number,"
                 "for example: 8.json"
             )
-    return True
+    system_output_files.sort(
+        key=lambda system_path: int(
+            os.path.basename(system_path).split(".")[0].split("_")[0]
+        )
+    )
 
 
 def main():
@@ -46,11 +48,11 @@ def main():
     parser.add_argument("--benchmark", type=str, help="benchmark config")
 
     parser.add_argument(
-        "--system_outputs", type=str, nargs="+", help="benchmark config"
+        "--system_output_files", type=str, nargs="+", help="The system output files."
     )
 
     parser.add_argument(
-        "--system_details", type=str, help="File of system details in JSON format"
+        "--system_details_file", type=str, help="File of system details in JSON format"
     )
 
     parser.add_argument(
@@ -66,87 +68,60 @@ def main():
     )
     args = parser.parse_args()
 
+    client_config = Config(
+        args.email,
+        args.api_key,
+        args.server,
+    )
+    client = ExplainaboardClient(client_config)
+    frontend = client_config.get_env_host_map()[args.server].frontend
+
     benchmark = args.benchmark
     with open(benchmark, "r") as f:
         benchmark_config = json.load(f)
 
-    system_outputs = args.system_outputs
-
-    if validate_outputs(system_outputs):
-        system_outputs.sort(
-            key=lambda system_path: int(
-                os.path.basename(system_path).split(".")[0].split("_")[0]
-            )
-        )
-    else:
-        raise ValueError("System output file names should start with number")
+    system_output_files = args.system_output_files
+    _validate_and_sort_outputs(system_output_files)
 
     shared_users = args.shared_users or []
-    # Read system details file
-    system_details = {}
-    if args.system_details:
-        with open(args.system_details, "r") as fin:
-            system_details = json.load(fin)
 
     for idx, dataset_info in enumerate(benchmark_config["datasets"]):
         if idx > 0:
-            time.sleep(5)
-        dataset_name = dataset_info["dataset_name"]
-        sub_dataset = dataset_info["sub_dataset"]
-        dataset_split = dataset_info["dataset_split"]
+            time.sleep(_SLEEP_BETWEEN_SUBMISSIONS)
+
+        source_language = dataset_info.get("source_language", "en")
+        target_language = dataset_info.get("target_language", "en")
         metric_names = [metric_dict["name"] for metric_dict in dataset_info["metrics"]]
-        task = dataset_info["task"]
 
-        source_language = (
-            "en"
-            if "source_language" not in dataset_info.keys()
-            else dataset_info["source_language"]
-        )
-
-        target_language = (
-            "en"
-            if "target_language" not in dataset_info.keys()
-            else dataset_info["target_language"]
-        )
-
-        output_file_type = dataset_info["output_file_type"]
-
-        # Do the actual upload
-        system_output = SystemOutputProps(
-            data=system_outputs[idx],
-            file_type=output_file_type,
-        )
-
-        metadata = SystemMetadata(
-            task=task,
-            is_private=not args.public,
+        result = client.evaluate_system_file(
+            system_output_file=system_output_files[idx],
+            system_output_file_type=dataset_info["output_file_type"],
+            task=dataset_info["task"],
+            public=args.public,
             system_name=args.system_name,
             metric_names=metric_names,
             source_language=source_language,
             target_language=target_language,
-            dataset_metadata_id=generate_dataset_id(dataset_name, sub_dataset),
-            dataset_split=dataset_split,
+            dataset=dataset_info["dataset_name"],
+            sub_dataset=dataset_info.get("sub_dataset"),
+            split=dataset_info.get("dataset_split"),
             shared_users=shared_users,
-            system_details=system_details,
+            system_details_file=args.system_details_file,
         )
 
-        create_props = SystemCreateProps(
-            metadata=metadata, system_output=system_output, custom_datset=None
-        )
-        client_config = Config(
-            args.email,
-            args.api_key,
-            args.server,
-        )
-        client = ExplainaboardClient(client_config)
-
-        result: System = client.systems_post(create_props)
+        sys_id = result["system_id"]
         try:
-            sys_id = result.system_id
             client.systems_get_by_id(sys_id)
-            print(f"evaluated system {args.system_name} with ID {sys_id}")
+            print(
+                f"successfully evaluated system {args.system_name} on"
+                f" {system_output_files[idx]} with ID {sys_id}\n"
+                f"view it at {frontend}/systems?system_id={sys_id}\n"
+            )
         except Exception:
-            print(f"failed to evaluate system {args.system_name}")
+            print(
+                f"failed to evaluate system {args.system_name} on"
+                f" {system_output_files[idx]}"
+            )
 
 
 if __name__ == "__main__":
