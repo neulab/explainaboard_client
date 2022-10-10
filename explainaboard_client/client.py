@@ -38,7 +38,7 @@ class ExplainaboardClient:
         self.close()
 
     # ---- Client Functions
-    def evaluate_file(
+    def evaluate_system_file(
         self,
         task: str,
         system_name: str,
@@ -55,8 +55,8 @@ class ExplainaboardClient:
         system_details_file: str | None = None,
         public: bool = False,
         shared_users: list[str] | None = None,
-    ) -> System:
-        """Evaluate a system output file.
+    ) -> dict:
+        """Evaluate a system output file and return a dictionary of results.
 
         Args:
             task: What task you will be analyzing.
@@ -136,7 +136,8 @@ class ExplainaboardClient:
             else SystemCreateProps(metadata=metadata, system_output=system_output)
         )
 
-        return self._systems_post(create_props)
+        result: System = self._systems_post(create_props)
+        return result.to_dict()
 
     # --- Pass-through API calls that will be deprecated
     def systems_post(
@@ -153,7 +154,7 @@ class ExplainaboardClient:
 
     def systems_get_by_id(self, system_id: str, **kwargs):
         """API call to get systems. Will be replaced in the future."""
-        self._default_api.systems_get_by_id(system_id, **kwargs)
+        return self._default_api.systems_get_by_id(system_id, **kwargs)
 
     def systems_delete_by_id(self, system_id: str, **kwargs):
         """API call to delete systems. Will be replaced in the future."""
@@ -161,7 +162,7 @@ class ExplainaboardClient:
 
     def systems_get(self, **kwargs):
         """API call to get systems. Will be replaced in the future."""
-        self._default_api.systems_get(**kwargs)
+        return self._default_api.systems_get(**kwargs)
 
     # --- Private utility functions
     def _systems_post(

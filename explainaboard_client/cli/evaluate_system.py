@@ -112,7 +112,7 @@ def main():
     client = ExplainaboardClient(client_config)
 
     try:
-        evaluation_data = client.evaluate_file(
+        evaluation_data = client.evaluate_system_file(
             task=args.task,
             system_name=args.system_name,
             system_output_file=args.system_output_file,

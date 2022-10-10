@@ -1,6 +1,5 @@
 import os
 
-from explainaboard_api_client.models import System
 from explainaboard_client.tests.test_utils import test_artifacts_path, TestEndpointsE2E
 
 
@@ -9,7 +8,7 @@ class TestSystem(TestEndpointsE2E):
     _DATASET = os.path.join(test_artifacts_path, "sst2-dataset.tsv")
 
     def test_no_custom_dataset(self):
-        result: System = self._client.evaluate_file(
+        result: dict = self._client.evaluate_system_file(
             system_output_file=self._SYSTEM_OUTPUT,
             system_output_file_type="text",
             task="text-classification",
@@ -21,7 +20,7 @@ class TestSystem(TestEndpointsE2E):
             split="test",
             shared_users=["explainaboard@gmail.com"],
         )
-        sys_id = result.system_id
+        sys_id = result["system_id"]
         try:
             sys = self._client.systems_get_by_id(sys_id)
             self.assertIn("dataset", sys)
@@ -30,7 +29,7 @@ class TestSystem(TestEndpointsE2E):
             self._client.systems_delete_by_id(sys_id)
 
     def test_custom_dataset(self):
-        result: System = self._client.evaluate_file(
+        result: dict = self._client.evaluate_system_file(
             system_output_file=self._SYSTEM_OUTPUT,
             system_output_file_type="text",
             custom_dataset_file=self._DATASET,
@@ -44,5 +43,5 @@ class TestSystem(TestEndpointsE2E):
             shared_users=["explainaboard@gmail.com"],
         )
         # cleanup
-        sys_id = result.system_id
+        sys_id = result["system_id"]
         self._client.systems_delete_by_id(sys_id)
