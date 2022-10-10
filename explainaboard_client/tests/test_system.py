@@ -1,70 +1,48 @@
 import os
 
-from explainaboard_api_client.models import (
-    System,
-    SystemCreateProps,
-    SystemMetadata,
-    SystemOutputProps,
-)
+from explainaboard_api_client.models import System
 from explainaboard_client.tests.test_utils import test_artifacts_path, TestEndpointsE2E
-from explainaboard_client.utils import generate_dataset_id
 
 
 class TestSystem(TestEndpointsE2E):
-    _SYSTEM_OUTPUT = SystemOutputProps(
-        data=os.path.join(test_artifacts_path, "sst2-lstm-output.txt"),
-        file_type="text",
-    )
+    _SYSTEM_OUTPUT = os.path.join(test_artifacts_path, "sst2-lstm-output.txt")
+    _DATASET = os.path.join(test_artifacts_path, "sst2-dataset.tsv")
 
     def test_no_custom_dataset(self):
-        metadata = SystemMetadata(
+        result: System = self._client.evaluate_file(
+            system_output_file=self._SYSTEM_OUTPUT,
+            system_output_file_type="text",
             task="text-classification",
-            is_private=True,
             system_name="test_cli",
             metric_names=["Accuracy"],
             source_language="en",
             target_language="en",
-            dataset_metadata_id=generate_dataset_id("sst2", None),
-            dataset_split="test",
+            dataset="sst2",
+            split="test",
             shared_users=["explainaboard@gmail.com"],
-            system_details={"hello": "world"},
         )
-        create_props = SystemCreateProps(
-            metadata=metadata, system_output=self._SYSTEM_OUTPUT
-        )
-        result: System = self._client.systems_post(create_props)
         sys_id = result.system_id
         try:
             sys = self._client.systems_get_by_id(sys_id)
             self.assertIn("dataset", sys)
             self.assertIn("system_info", sys)
-
         finally:  # cleanup
             self._client.systems_delete_by_id(sys_id)
 
     def test_custom_dataset(self):
-        metadata = SystemMetadata(
+        result: System = self._client.evaluate_file(
+            system_output_file=self._SYSTEM_OUTPUT,
+            system_output_file_type="text",
+            custom_dataset_file=self._DATASET,
+            custom_dataset_file_type="tsv",
             task="text-classification",
-            is_private=True,
             system_name="test_cli",
             metric_names=["Accuracy"],
             source_language="en",
             target_language="en",
-            dataset_split="test",
+            split="test",  # TODO(gneubig): required, but probably shouldn't be
             shared_users=["explainaboard@gmail.com"],
-            system_details={"hello": "world"},
         )
-        custom_dataset = SystemOutputProps(
-            data=os.path.join(test_artifacts_path, "sst2-dataset.tsv"),
-            file_type="tsv",
-        )
-        create_props = SystemCreateProps(
-            metadata=metadata,
-            system_output=self._SYSTEM_OUTPUT,
-            custom_dataset=custom_dataset,
-        )
-        result: System = self._client.systems_post(create_props)
-
         # cleanup
         sys_id = result.system_id
         self._client.systems_delete_by_id(sys_id)

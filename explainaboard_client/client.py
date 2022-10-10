@@ -136,17 +136,38 @@ class ExplainaboardClient:
             else SystemCreateProps(metadata=metadata, system_output=system_output)
         )
 
-        return self.systems_post(create_props)
+        return self._systems_post(create_props)
 
-    # --- Direct API calls
+    # --- Pass-through API calls that will be deprecated
     def systems_post(
         self, system_create_props: SystemCreateProps, **kwargs
     ) -> Union[System, ApplyResult]:
-        """Post a system using the client (deprecated)."""
+        """Post a system using the client.
+
+        The public function is deprecated and will be removed."""
         logging.getLogger("explainaboard_client").warning(
             "WARNING: systems_post() is deprecated and may be removed in the future."
             " Please use evaluate_file() instead."
         )
+        return self._systems_post(system_create_props, **kwargs)
+
+    def systems_get_by_id(self, system_id: str, **kwargs):
+        """API call to get systems. Will be replaced in the future."""
+        self._default_api.systems_get_by_id(system_id, **kwargs)
+
+    def systems_delete_by_id(self, system_id: str, **kwargs):
+        """API call to delete systems. Will be replaced in the future."""
+        self._default_api.systems_delete_by_id(system_id, **kwargs)
+
+    def systems_get(self, **kwargs):
+        """API call to get systems. Will be replaced in the future."""
+        self._default_api.systems_get(**kwargs)
+
+    # --- Private utility functions
+    def _systems_post(
+        self, system_create_props: SystemCreateProps, **kwargs
+    ) -> Union[System, ApplyResult]:
+        """Post a system using the client."""
         if not self._active:
             raise RuntimeError("Client is closed.")
         loaded_system_output = SystemOutputProps(
@@ -169,15 +190,3 @@ class ExplainaboardClient:
                 system_output=loaded_system_output,
             )
         return self._default_api.systems_post(props_with_loaded_file, **kwargs)
-
-    def systems_get_by_id(self, system_id: str, **kwargs):
-        """API call to get systems. Will be replaced in the future."""
-        self._default_api.systems_get_by_id(system_id, **kwargs)
-
-    def systems_delete_by_id(self, system_id: str, **kwargs):
-        """API call to delete systems. Will be replaced in the future."""
-        self._default_api.systems_delete_by_id(system_id, **kwargs)
-
-    def systems_get(self, **kwargs):
-        """API call to get systems. Will be replaced in the future."""
-        self._default_api.systems_get(**kwargs)
