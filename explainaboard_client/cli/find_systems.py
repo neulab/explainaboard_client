@@ -2,8 +2,6 @@ import argparse
 import json
 import traceback
 
-from explainaboard_api_client.model.system import System
-from explainaboard_api_client.model.systems_return import SystemsReturn
 from explainaboard_client import Config, ExplainaboardClient
 from explainaboard_client.utils import sanitize_for_json
 
@@ -109,16 +107,21 @@ def main():
         args.server,
     )
     client = ExplainaboardClient(client_config)
-    kwargs: dict = {
-        k: v
-        for k, v in vars(args).items()
-        if (v is not None and k not in {"email", "api_key", "server", "output_format"})
-    }
     try:
-        systems: SystemsReturn = client.systems_get(**kwargs)
-        system_list: list[System] = [
-            sanitize_for_json(x.to_dict()) for x in systems.systems
-        ]
+        system_list: list[dict] = client.find_systems(
+            system_name=args.system_name,
+            task=args.task,
+            dataset=args.dataset,
+            subdataset=args.subdataset,
+            split=args.split,
+            creator=args.creator,
+            shared_users=args.shared_users,
+            page=args.page,
+            page_size=args.page_size,
+            sort_field=args.sort_field,
+            sort_direction=args.sort_direction,
+        )
+        system_list = [sanitize_for_json(x) for x in system_list]
         if args.output_format == "json":
             print(json.dumps(system_list))
         else:

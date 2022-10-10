@@ -3,11 +3,12 @@ from __future__ import annotations
 import json
 import logging
 from multiprocessing.pool import ApplyResult
-from typing import Union
+from typing import Literal, Union
 
 from explainaboard_api_client import ApiClient
 from explainaboard_api_client.api.default_api import DefaultApi
 from explainaboard_api_client.model.system_metadata import SystemMetadata
+from explainaboard_api_client.model.systems_return import SystemsReturn
 from explainaboard_api_client.models import System, SystemCreateProps, SystemOutputProps
 from explainaboard_client.config import Config
 from explainaboard_client.tasks import DEFAULT_METRICS, infer_file_type, TaskType
@@ -252,6 +253,56 @@ class ExplainaboardClient:
         """
         self._default_api.systems_delete_by_id(system_id)
 
+    def find_systems(
+        self,
+        system_name: str | None,
+        task: str | None = None,
+        dataset: str | None = None,
+        sub_dataset: str | None = None,
+        split: str | None = None,
+        creator: str | None = None,
+        shared_users: list[str] | None = None,
+        page: int = 0,
+        page_size: int = 20,
+        sort_field: str = "created_at",
+        sort_direction: Literal["desc", "asc"] = "desc",
+    ) -> list[dict]:
+        """Find systems by specifying a query.
+
+        Args:
+            system_name: Fuzzy match for system name.
+            task: Filter by task type.
+            dataset: Name of the dataset.
+            sub_dataset: Name of the subdataset.
+            split: Dataset split.
+            creator: Email of the creator of the system.
+            shared_users: Emails of users with which the system is shared.
+            page: Which page to retrieve.
+            page_size: The number of items on each page. Set to 0 for all.
+            sort_field: Which field to sort by. Supports `created_at` and metric names
+                e.g. "Accuracy".
+            sort_direction: Sort in ascending or descending order.
+
+        Returns:
+            A list of dictionaries containing system information.
+        """
+        # TODO(gneubig): the API is not accepting nonetype, but this seems like a bug
+        result: SystemsReturn = self._default_api.systems_get(
+            system_name=system_name or "",
+            task=task or "",
+            dataset=dataset or "",
+            subdataset=sub_dataset or "",
+            split=split or "",
+            creator=creator or "",
+            shared_users=shared_users or [],
+            page=page,
+            page_size=page_size,
+            sort_field=sort_field,
+            sort_direction=sort_direction,
+        )
+        result_list = [x.to_dict() for x in result.systems]
+        return result_list
+
     # --- Pass-through API calls that will be deprecated
     def systems_post(
         self, system_create_props: SystemCreateProps, **kwargs
@@ -302,6 +353,10 @@ class ExplainaboardClient:
 
     def systems_get(self, **kwargs):
         """API call to get systems. Will be replaced in the future."""
+        logging.getLogger("explainaboard_client").warning(
+            "WARNING: systems_get() is deprecated and may be removed in the"
+            " future. Please use get_systems() instead."
+        )
         return self._default_api.systems_get(**kwargs)
 
     def info_get(self, **kwargs):
@@ -310,4 +365,8 @@ class ExplainaboardClient:
 
     def user_get(self, **kwargs):
         """API call to get a user. Will be replaced in the future."""
+        logging.getLogger("explainaboard_client").warning(
+            "WARNING: user_get() is deprecated and may be removed in the"
+            " future. Please use get_user() instead."
+        )
         return self._default_api.user_get(**kwargs)
