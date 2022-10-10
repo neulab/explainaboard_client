@@ -164,6 +164,14 @@ class ExplainaboardClient:
         """API call to get systems. Will be replaced in the future."""
         return self._default_api.systems_get(**kwargs)
 
+    def info_get(self, **kwargs):
+        """API call to get info. Will be replaced in the future."""
+        return self._default_api.info_get(**kwargs)
+
+    def user_get(self, **kwargs):
+        """API call to get a user. Will be replaced in the future."""
+        return self._default_api.user_get(**kwargs)
+
     # --- Private utility functions
     def _systems_post(
         self, system_create_props: SystemCreateProps, **kwargs
