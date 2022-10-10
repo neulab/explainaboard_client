@@ -8,6 +8,10 @@ def encode_file_to_base64(path: str) -> str:
         return base64.b64encode(f.read()).decode("utf-8")
 
 
+def encode_string_to_base64(text: str) -> str:
+    return base64.b64encode(text.encode("utf-8")).decode("utf-8")
+
+
 def generate_dataset_id(dataset_name: str, sub_dataset: Optional[str]) -> str:
     """HACK probably shouldn't expose this logic to the users"""
     if not dataset_name:

@@ -101,10 +101,6 @@ class ExplainaboardClient:
                 system_details = json.load(fin)
 
         # Do the actual upload
-        system_output = SystemOutputProps(
-            data=system_output_file,
-            file_type=system_output_file_type,
-        )
         metadata = SystemMetadata(
             task=task,
             is_private=not public,
@@ -116,27 +112,32 @@ class ExplainaboardClient:
             shared_users=shared_users,
             system_details=system_details,
         )
-        custom_dataset = None
+        if dataset is not None:
+            metadata.dataset_metadata_id = generate_dataset_id(dataset, sub_dataset)
+        elif not custom_dataset_file:
+            raise ValueError("Must specify dataset or custom_dataset_file")
+
+        loaded_system_output = SystemOutputProps(
+            data=encode_file_to_base64(system_output_file),
+            file_type=system_output_file_type,
+        )
         if custom_dataset_file:
-            custom_dataset = SystemOutputProps(
-                data=custom_dataset_file,
+            loaded_custom_dataset = SystemOutputProps(
+                data=encode_file_to_base64(custom_dataset_file),
                 file_type=custom_dataset_file_type,
             )
-        elif dataset is not None:
-            metadata.dataset_metadata_id = generate_dataset_id(dataset, sub_dataset)
-        else:
-            raise ValueError("Must specify dataset or custom_dataset_file")
-        create_props = (
-            SystemCreateProps(
+            props_with_loaded_file = SystemCreateProps(
                 metadata=metadata,
-                system_output=system_output,
-                custom_dataset=custom_dataset,
+                system_output=loaded_system_output,
+                custom_dataset=loaded_custom_dataset,
             )
-            if custom_dataset is not None
-            else SystemCreateProps(metadata=metadata, system_output=system_output)
-        )
+        else:
+            props_with_loaded_file = SystemCreateProps(
+                metadata=metadata,
+                system_output=loaded_system_output,
+            )
+        result: System = self._default_api.systems_post(props_with_loaded_file)
 
-        result: System = self._systems_post(create_props)
         return result.to_dict()
 
     # --- Pass-through API calls that will be deprecated
@@ -150,35 +151,6 @@ class ExplainaboardClient:
             "WARNING: systems_post() is deprecated and may be removed in the future."
             " Please use evaluate_file() instead."
         )
-        return self._systems_post(system_create_props, **kwargs)
-
-    def systems_get_by_id(self, system_id: str, **kwargs):
-        """API call to get systems. Will be replaced in the future."""
-        return self._default_api.systems_get_by_id(system_id, **kwargs)
-
-    def systems_delete_by_id(self, system_id: str, **kwargs):
-        """API call to delete systems. Will be replaced in the future."""
-        self._default_api.systems_delete_by_id(system_id, **kwargs)
-
-    def systems_get(self, **kwargs):
-        """API call to get systems. Will be replaced in the future."""
-        return self._default_api.systems_get(**kwargs)
-
-    def info_get(self, **kwargs):
-        """API call to get info. Will be replaced in the future."""
-        return self._default_api.info_get(**kwargs)
-
-    def user_get(self, **kwargs):
-        """API call to get a user. Will be replaced in the future."""
-        return self._default_api.user_get(**kwargs)
-
-    # --- Private utility functions
-    def _systems_post(
-        self, system_create_props: SystemCreateProps, **kwargs
-    ) -> Union[System, ApplyResult]:
-        """Post a system using the client."""
-        if not self._active:
-            raise RuntimeError("Client is closed.")
         loaded_system_output = SystemOutputProps(
             data=encode_file_to_base64(system_create_props.system_output.data),
             file_type=system_create_props.system_output.file_type,
@@ -199,3 +171,23 @@ class ExplainaboardClient:
                 system_output=loaded_system_output,
             )
         return self._default_api.systems_post(props_with_loaded_file, **kwargs)
+
+    def systems_get_by_id(self, system_id: str, **kwargs):
+        """API call to get systems. Will be replaced in the future."""
+        return self._default_api.systems_get_by_id(system_id, **kwargs)
+
+    def systems_delete_by_id(self, system_id: str, **kwargs):
+        """API call to delete systems. Will be replaced in the future."""
+        self._default_api.systems_delete_by_id(system_id, **kwargs)
+
+    def systems_get(self, **kwargs):
+        """API call to get systems. Will be replaced in the future."""
+        return self._default_api.systems_get(**kwargs)
+
+    def info_get(self, **kwargs):
+        """API call to get info. Will be replaced in the future."""
+        return self._default_api.info_get(**kwargs)
+
+    def user_get(self, **kwargs):
+        """API call to get a user. Will be replaced in the future."""
+        return self._default_api.user_get(**kwargs)
