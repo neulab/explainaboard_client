@@ -36,7 +36,7 @@ class ExplainaboardClient:
         """
         host = get_host(environment)
         api_client = ApiClient(
-            Configuration(username=username, api_key=api_key, host=host)
+            Configuration(username=username, password=api_key, host=host)
         )
         self._default_api: DefaultApi = DefaultApi(api_client)
         self._active: bool = True
