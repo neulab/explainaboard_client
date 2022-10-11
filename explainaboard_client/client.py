@@ -11,7 +11,11 @@ from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.models import System, SystemCreateProps, SystemOutputProps
 from explainaboard_client.config import Config
 from explainaboard_client.tasks import DEFAULT_METRICS, infer_file_type, TaskType
-from explainaboard_client.utils import encode_file_to_base64, generate_dataset_id
+from explainaboard_client.utils import (
+    encode_file_to_base64,
+    encode_string_to_base64,
+    generate_dataset_id,
+)
 
 
 class ExplainaboardClient:
@@ -38,6 +42,94 @@ class ExplainaboardClient:
         self.close()
 
     # ---- Client Functions
+    def evaluate_system(
+        self,
+        task: str,
+        system_name: str,
+        system_output: list[dict],
+        dataset: str | None = None,
+        sub_dataset: str | None = None,
+        split: str | None = None,
+        custom_dataset: list[dict] | None = None,
+        metric_names: list[str] | None = None,
+        source_language: str | None = None,
+        target_language: str | None = None,
+        system_details: dict | None = None,
+        public: bool = False,
+        shared_users: list[str] | None = None,
+    ) -> dict:
+        """Evaluate a system output file and return a dictionary of results.
+
+        Args:
+            task: What task you will be analyzing.
+            system_name: Name of the system that you are evaluating.
+            system_output: Examples in the system output.
+            dataset: A dataset name from DataLab.
+            sub_dataset: A sub-dataset name from DataLab.
+            split: The name of the dataset split to process.
+            custom_dataset: Examples in the custom dataset.
+            metric_names: The metrics to compute, leave blank for task defaults
+            source_language: The language on the input side.
+            target_language: The language on the output side.
+            system_details: File of system details in JSON format.
+            public: Make the evaluation results public.
+            shared_users: Emails of users to share with.
+        """
+        # Sanity checks
+        if not (source_language or target_language):
+            raise ValueError("You must specify source and/or target language")
+        if custom_dataset and (len(custom_dataset) != len(system_output)):
+            raise ValueError(
+                "Custom dataset must have the same length as system output"
+            )
+
+        # Infer missing values
+        task = TaskType(task)
+        metric_names = metric_names or DEFAULT_METRICS[task]
+        source_language = source_language or target_language
+        target_language = target_language or source_language
+        shared_users = shared_users or []
+
+        # Do the actual upload
+        metadata = SystemMetadata(
+            task=task,
+            is_private=not public,
+            system_name=system_name,
+            metric_names=metric_names,
+            source_language=source_language,
+            target_language=target_language,
+            dataset_split=split,
+            shared_users=shared_users,
+            system_details=system_details,
+        )
+        if dataset is not None:
+            metadata.dataset_metadata_id = generate_dataset_id(dataset, sub_dataset)
+        elif not custom_dataset:
+            raise ValueError("Must specify dataset or custom_dataset")
+
+        loaded_system_output = SystemOutputProps(
+            data=encode_string_to_base64(json.dumps({"examples": system_output})),
+            file_type="json",
+        )
+        if custom_dataset:
+            loaded_custom_dataset = SystemOutputProps(
+                data=encode_string_to_base64(json.dumps({"examples": custom_dataset})),
+                file_type="json",
+            )
+            props_with_loaded_file = SystemCreateProps(
+                metadata=metadata,
+                system_output=loaded_system_output,
+                custom_dataset=loaded_custom_dataset,
+            )
+        else:
+            props_with_loaded_file = SystemCreateProps(
+                metadata=metadata,
+                system_output=loaded_system_output,
+            )
+        result: System = self._default_api.systems_post(props_with_loaded_file)
+
+        return result.to_dict()
+
     def evaluate_system_file(
         self,
         task: str,
@@ -101,10 +193,6 @@ class ExplainaboardClient:
                 system_details = json.load(fin)
 
         # Do the actual upload
-        system_output = SystemOutputProps(
-            data=system_output_file,
-            file_type=system_output_file_type,
-        )
         metadata = SystemMetadata(
             task=task,
             is_private=not public,
@@ -116,27 +204,32 @@ class ExplainaboardClient:
             shared_users=shared_users,
             system_details=system_details,
         )
-        custom_dataset = None
+        if dataset is not None:
+            metadata.dataset_metadata_id = generate_dataset_id(dataset, sub_dataset)
+        elif not custom_dataset_file:
+            raise ValueError("Must specify dataset or custom_dataset_file")
+
+        loaded_system_output = SystemOutputProps(
+            data=encode_file_to_base64(system_output_file),
+            file_type=system_output_file_type,
+        )
         if custom_dataset_file:
-            custom_dataset = SystemOutputProps(
-                data=custom_dataset_file,
+            loaded_custom_dataset = SystemOutputProps(
+                data=encode_file_to_base64(custom_dataset_file),
                 file_type=custom_dataset_file_type,
             )
-        elif dataset is not None:
-            metadata.dataset_metadata_id = generate_dataset_id(dataset, sub_dataset)
-        else:
-            raise ValueError("Must specify dataset or custom_dataset_file")
-        create_props = (
-            SystemCreateProps(
+            props_with_loaded_file = SystemCreateProps(
                 metadata=metadata,
-                system_output=system_output,
-                custom_dataset=custom_dataset,
+                system_output=loaded_system_output,
+                custom_dataset=loaded_custom_dataset,
             )
-            if custom_dataset is not None
-            else SystemCreateProps(metadata=metadata, system_output=system_output)
-        )
+        else:
+            props_with_loaded_file = SystemCreateProps(
+                metadata=metadata,
+                system_output=loaded_system_output,
+            )
+        result: System = self._default_api.systems_post(props_with_loaded_file)
 
-        result: System = self._systems_post(create_props)
         return result.to_dict()
 
     # --- Pass-through API calls that will be deprecated
@@ -150,35 +243,6 @@ class ExplainaboardClient:
             "WARNING: systems_post() is deprecated and may be removed in the future."
             " Please use evaluate_file() instead."
         )
-        return self._systems_post(system_create_props, **kwargs)
-
-    def systems_get_by_id(self, system_id: str, **kwargs):
-        """API call to get systems. Will be replaced in the future."""
-        return self._default_api.systems_get_by_id(system_id, **kwargs)
-
-    def systems_delete_by_id(self, system_id: str, **kwargs):
-        """API call to delete systems. Will be replaced in the future."""
-        self._default_api.systems_delete_by_id(system_id, **kwargs)
-
-    def systems_get(self, **kwargs):
-        """API call to get systems. Will be replaced in the future."""
-        return self._default_api.systems_get(**kwargs)
-
-    def info_get(self, **kwargs):
-        """API call to get info. Will be replaced in the future."""
-        return self._default_api.info_get(**kwargs)
-
-    def user_get(self, **kwargs):
-        """API call to get a user. Will be replaced in the future."""
-        return self._default_api.user_get(**kwargs)
-
-    # --- Private utility functions
-    def _systems_post(
-        self, system_create_props: SystemCreateProps, **kwargs
-    ) -> Union[System, ApplyResult]:
-        """Post a system using the client."""
-        if not self._active:
-            raise RuntimeError("Client is closed.")
         loaded_system_output = SystemOutputProps(
             data=encode_file_to_base64(system_create_props.system_output.data),
             file_type=system_create_props.system_output.file_type,
@@ -199,3 +263,23 @@ class ExplainaboardClient:
                 system_output=loaded_system_output,
             )
         return self._default_api.systems_post(props_with_loaded_file, **kwargs)
+
+    def systems_get_by_id(self, system_id: str, **kwargs):
+        """API call to get systems. Will be replaced in the future."""
+        return self._default_api.systems_get_by_id(system_id, **kwargs)
+
+    def systems_delete_by_id(self, system_id: str, **kwargs):
+        """API call to delete systems. Will be replaced in the future."""
+        self._default_api.systems_delete_by_id(system_id, **kwargs)
+
+    def systems_get(self, **kwargs):
+        """API call to get systems. Will be replaced in the future."""
+        return self._default_api.systems_get(**kwargs)
+
+    def info_get(self, **kwargs):
+        """API call to get info. Will be replaced in the future."""
+        return self._default_api.info_get(**kwargs)
+
+    def user_get(self, **kwargs):
+        """API call to get a user. Will be replaced in the future."""
+        return self._default_api.user_get(**kwargs)
