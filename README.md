@@ -44,7 +44,7 @@ python -m explainaboard_client.cli.evaluate_system \
   --email $EB_EMAIL --api_key $EB_API_KEY \
   --task [TASK_ID] \
   --system_name [MODEL_NAME] \
-  --system_output [SYSTEM_OUTPUT] --output_file_type [FILE_TYPE] \
+  --system_output_file [SYSTEM_OUTPUT] --system_output_file_type [FILE_TYPE] \
   --dataset [DATASET] --sub_dataset [SUB_DATASET] --split [SPLIT] \
   --source_language [SOURCE] --target_language [TARGET] \
   [--public]
@@ -53,7 +53,7 @@ python -m explainaboard_client.cli.evaluate_system \
 You will need to fill in all the settings appropriately, for example:
 * `[TASK_ID]` is the ID of the task you want to perform. A full list is [here](https://github.com/neulab/explainaboard_web/blob/main/backend/src/impl/tasks.py).
 * `[MODEL_NAME]` is whatever name you want to give to your model.
-* `[SYSTEM_OUTPUT]` is the file that you want to evaluate.
+* `[SYSTEM_OUTPUT_FILE]` is the file that you want to evaluate.
 * `[FILE_TYPE]` is the type of the file, "text", "tsv", "csv", "conll", or "json".
 * `[DATASET]`, `[SUB_DATASET]` and `[SPLIT]` indicate which dataset you're evaluating
   a system output for.
@@ -71,8 +71,8 @@ python -m explainaboard_client.cli.evaluate_system \
   --email $EB_EMAIL --api_key $EB_API_KEY \
   --task [TASK_ID] \
   --system_name [MODEL_NAME] \
-  --system_output [SYSTEM_OUTPUT] --output_file_type [FILE_TYPE] \
-  --custom_dataset [CUSTOM_DATASET] --custom_dataset_file_type [FILE_TYPE] \
+  --system_output_file [SYSTEM_OUTPUT] --system_output_file_type [FILE_TYPE] \
+  --custom_dataset_file [CUSTOM_DATASET] --custom_dataset_file_type [FILE_TYPE] \
   --source_language [SOURCE] --target_language [TARGET]
 ```
 

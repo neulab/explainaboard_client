@@ -33,9 +33,13 @@ ENV_HOST_MAP: defaultdict[str, HostConfig] = defaultdict(
 
 @dataclass
 class Config:
-    """configurations for explainaboard CLI
-    :param host: if specified, it takes precedence over environment
+    """Configurations for explainaboard CLI
 
+    Vars:
+        user_email: The email of the user
+        api_key: API key for explainaboard
+        environment: Environment where the call should be made
+        host: A custom host to use
     """
 
     user_email: str
@@ -50,6 +54,9 @@ class Config:
     @staticmethod
     def get_env_host_map():
         return ENV_HOST_MAP
+
+    def get_env(self):
+        return ENV_HOST_MAP[self.environment]
 
     def to_client_config(self):
         client_config = Configuration()
