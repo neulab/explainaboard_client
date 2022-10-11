@@ -98,8 +98,9 @@ class TestSystem(TestEndpointsE2E):
             self._client.delete_system(sys_id)
 
     def test_find_system(self):
+        system_ids = []
         for i in range(2):
-            self._client.evaluate_system_file(
+            result = self._client.evaluate_system_file(
                 system_output_file=self._SYSTEM_OUTPUT,
                 system_output_file_type="text",
                 task="text-classification",
@@ -111,15 +112,16 @@ class TestSystem(TestEndpointsE2E):
                 split="test",
                 shared_users=["explainaboard@gmail.com"],
             )
+            system_ids.append(result["system_id"])
         all_systems = self._client.find_systems(system_name="test_cli")
         self.assertGreater(len(all_systems), 1)
         unique_names = {x["system_info"]["system_name"]: 0 for x in all_systems}
         self.assertIn("test_cli0", unique_names)
         self.assertIn("test_cli1", unique_names)
-        for x in all_systems:
+        for x in system_ids:
             try:
-                self._client.delete_system(x["system_id"])
+                self._client.delete_system(x)
             except Exception:
                 logging.getLogger("explainaboard_client_tests").warning(
-                    f"could not delete system {x['system_id']}"
+                    f"could not delete system {x}"
                 )
