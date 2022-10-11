@@ -1,3 +1,4 @@
+import logging
 import os
 
 from explainaboard_client.tests.test_utils import test_artifacts_path, TestEndpointsE2E
@@ -95,3 +96,30 @@ class TestSystem(TestEndpointsE2E):
             self.assertIn("system_info", sys)
         finally:  # cleanup
             self._client.delete_system(sys_id)
+
+    def test_find_system(self):
+        for i in range(2):
+            self._client.evaluate_system_file(
+                system_output_file=self._SYSTEM_OUTPUT,
+                system_output_file_type="text",
+                task="text-classification",
+                system_name=f"test_cli{i}",
+                metric_names=["Accuracy"],
+                source_language="en",
+                target_language="en",
+                dataset="sst2",
+                split="test",
+                shared_users=["explainaboard@gmail.com"],
+            )
+        all_systems = self._client.find_systems(system_name="test_cli")
+        self.assertGreater(len(all_systems), 1)
+        unique_names = {x["system_info"]["system_name"]: 0 for x in all_systems}
+        self.assertIn("test_cli0", unique_names)
+        self.assertIn("test_cli1", unique_names)
+        for x in all_systems:
+            try:
+                self._client.delete_system(x["system_id"])
+            except Exception:
+                logging.getLogger("explainaboard_client_tests").warning(
+                    f"could not delete system {x['system_id']}"
+                )
