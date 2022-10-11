@@ -5,12 +5,12 @@ import logging
 from multiprocessing.pool import ApplyResult
 from typing import Literal, Union
 
-from explainaboard_api_client import ApiClient
+from explainaboard_api_client import ApiClient, Configuration
 from explainaboard_api_client.api.default_api import DefaultApi
 from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.systems_return import SystemsReturn
 from explainaboard_api_client.models import System, SystemCreateProps, SystemOutputProps
-from explainaboard_client.config import Config
+from explainaboard_client.config import get_host
 from explainaboard_client.tasks import DEFAULT_METRICS, infer_file_type, TaskType
 from explainaboard_client.utils import (
     encode_file_to_base64,
@@ -21,14 +21,23 @@ from explainaboard_client.utils import (
 
 class ExplainaboardClient:
     # ---- Initializers, etc.
-    def __init__(self, config: Config) -> None:
+    def __init__(
+        self,
+        username: str,
+        api_key: str,
+        environment: Literal["main", "staging", "local"] = "main",
+    ) -> None:
         """Initialize the ExplainaBoard client with a specific configuration.
 
         Args:
-            config (Config): The configuration for the ExplainaBoard client.
+            username: The username used with explainaboard.
+            api_key: The API key.
+            environment: Which environment to use, main/staging/local.
         """
-        self._config: Config = config
-        api_client = ApiClient(self._config.to_client_config())
+        host = get_host(environment)
+        api_client = ApiClient(
+            Configuration(username=username, api_key=api_key, host=host)
+        )
         self._default_api: DefaultApi = DefaultApi(api_client)
         self._active: bool = True
 

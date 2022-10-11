@@ -2,7 +2,6 @@ from multiprocessing.pool import ApplyResult
 
 from explainaboard_api_client import ApiException
 from explainaboard_client.client import ExplainaboardClient
-from explainaboard_client.config import Config
 from explainaboard_client.tests.test_utils import TestEndpointsE2E
 
 
@@ -13,7 +12,9 @@ class TestUserAPI(TestEndpointsE2E):
 
     def test_401(self):
         client = ExplainaboardClient(
-            Config("invalid_username", "invalid_api_key", "staging")
+            username="invalid_username",
+            api_key="invalid_api_key",
+            environment="staging",
         )
         with self.assertRaises(ApiException):
             client.user_get()

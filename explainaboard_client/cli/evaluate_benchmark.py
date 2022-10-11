@@ -7,7 +7,7 @@ from explainaboard_api_client.model.system import System
 from explainaboard_api_client.model.system_create_props import SystemCreateProps
 from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.system_output_props import SystemOutputProps
-from explainaboard_client import Config, ExplainaboardClient
+from explainaboard_client import ExplainaboardClient
 from explainaboard_client.utils import generate_dataset_id
 
 
@@ -30,7 +30,7 @@ def main():
         "on the ExplainaBoard web interface."
     )
     parser.add_argument(
-        "--email",
+        "--username",
         type=str,
         required=True,
         help="Email address used to sign in to ExplainaBoard",
@@ -57,12 +57,12 @@ def main():
         "--shared_users", type=str, nargs="+", help="Emails of users to share with"
     )
     parser.add_argument(
-        "--server",
+        "--environment",
         type=str,
         required=False,
         default="main",
         choices=["main", "staging", "local"],
-        help='Which server to use, "main" should be sufficient',
+        help='Which environment to use, "main" should be sufficient',
     )
     args = parser.parse_args()
 
@@ -133,12 +133,9 @@ def main():
         create_props = SystemCreateProps(
             metadata=metadata, system_output=system_output, custom_datset=None
         )
-        client_config = Config(
-            args.email,
-            args.api_key,
-            args.server,
+        client = ExplainaboardClient(
+            username=args.username, api_key=args.api_key, environment=args.environment
         )
-        client = ExplainaboardClient(client_config)
 
         result: System = client.systems_post(create_props)
         try:

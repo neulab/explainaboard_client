@@ -2,7 +2,7 @@ import argparse
 import json
 import traceback
 
-from explainaboard_client import Config, ExplainaboardClient
+from explainaboard_client import ExplainaboardClient
 from explainaboard_client.utils import sanitize_for_json
 
 
@@ -15,19 +15,19 @@ def main():
     )
     # --- Authentication arguments
     parser.add_argument(
-        "--email",
+        "--username",
         type=str,
         required=True,
         help="Email address used to sign in to ExplainaBoard",
     )
     parser.add_argument("--api_key", type=str, required=True, help="Your API key")
     parser.add_argument(
-        "--server",
+        "--environment",
         type=str,
         required=False,
         default="main",
         choices=["main", "staging", "local"],
-        help='Which server to use, "main" should be sufficient',
+        help='Which environment to use, "main" should be sufficient',
     )
     # --- Query arguments
     parser.add_argument(
@@ -101,18 +101,15 @@ def main():
     )
     args = parser.parse_args()
 
-    client_config = Config(
-        args.email,
-        args.api_key,
-        args.server,
+    client = ExplainaboardClient(
+        username=args.username, api_key=args.api_key, environment=args.environment
     )
-    client = ExplainaboardClient(client_config)
     try:
         system_list: list[dict] = client.find_systems(
             system_name=args.system_name,
             task=args.task,
             dataset=args.dataset,
-            subdataset=args.subdataset,
+            sub_dataset=args.subdataset,
             split=args.split,
             creator=args.creator,
             shared_users=args.shared_users,

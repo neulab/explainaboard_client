@@ -3,7 +3,7 @@ import sys
 import traceback
 
 from explainaboard_api_client import ApiException
-from explainaboard_client import Config, ExplainaboardClient
+from explainaboard_client import ExplainaboardClient
 from tqdm import tqdm
 
 
@@ -16,19 +16,19 @@ def main():
     )
     # --- Authentication arguments
     parser.add_argument(
-        "--email",
+        "--username",
         type=str,
         required=True,
-        help="Email address used to sign in to ExplainaBoard",
+        help="Username used to sign in to ExplainaBoard",
     )
     parser.add_argument("--api_key", type=str, required=True, help="Your API key")
     parser.add_argument(
-        "--server",
+        "--environment",
         type=str,
         required=False,
         default="main",
         choices=["main", "staging", "local"],
-        help='Which server to use, "main" should be sufficient',
+        help='Which environment to use, "main" should be sufficient',
     )
     # --- Query arguments
     parser.add_argument(
@@ -46,12 +46,9 @@ def main():
     )
     args = parser.parse_args()
 
-    client_config = Config(
-        args.email,
-        args.api_key,
-        args.server,
+    client = ExplainaboardClient(
+        username=args.username, api_key=args.api_key, environment=args.environment
     )
-    client = ExplainaboardClient(client_config)
 
     system_strs = []
     for system_id in tqdm(args.system_ids, desc="retrieving system info"):
