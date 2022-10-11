@@ -1,5 +1,6 @@
 import argparse
 
+import explainaboard_client
 from explainaboard_client import ExplainaboardClient
 from explainaboard_client.config import get_frontend
 from explainaboard_client.tasks import FileType, TaskType
@@ -16,10 +17,17 @@ def main():
     parser.add_argument(
         "--username",
         type=str,
-        required=True,
-        help="Email address used to sign in to ExplainaBoard",
+        default=explainaboard_client.username,
+        help="Username used to sign in to ExplainaBoard. Defaults to the EB_USERNAME "
+        "environment variable.",
     )
-    parser.add_argument("--api_key", type=str, required=True, help="Your API key")
+    parser.add_argument(
+        "--api_key",
+        type=str,
+        default=explainaboard_client.api_key,
+        help="API key for ExplainaBoard. Defaults to the EB_API_KEY environment "
+        "variable.",
+    )
     # ---- System info
     parser.add_argument(
         "--task",
@@ -105,9 +113,9 @@ def main():
     )
     args = parser.parse_args()
 
-    client = ExplainaboardClient(
-        username=args.username, api_key=args.api_key, environment=args.environment
-    )
+    explainaboard_client.username = args.username
+    explainaboard_client.api_key = args.api_key
+    client = ExplainaboardClient()
 
     try:
         evaluation_data = client.evaluate_system_file(

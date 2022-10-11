@@ -10,6 +10,7 @@ from explainaboard_api_client.api.default_api import DefaultApi
 from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.systems_return import SystemsReturn
 from explainaboard_api_client.models import System, SystemCreateProps, SystemOutputProps
+import explainaboard_client
 from explainaboard_client.config import get_host
 from explainaboard_client.tasks import DEFAULT_METRICS, infer_file_type, TaskType
 from explainaboard_client.utils import (
@@ -21,22 +22,15 @@ from explainaboard_client.utils import (
 
 class ExplainaboardClient:
     # ---- Initializers, etc.
-    def __init__(
-        self,
-        username: str,
-        api_key: str,
-        environment: Literal["main", "staging", "local"] = "main",
-    ) -> None:
-        """Initialize the ExplainaBoard client with a specific configuration.
-
-        Args:
-            username: The username used with explainaboard.
-            api_key: The API key.
-            environment: Which environment to use, main/staging/local.
-        """
-        host = get_host(environment)
+    def __init__(self) -> None:
+        """Initialize the ExplainaBoard client."""
+        host = get_host(explainaboard_client.environment)
         api_client = ApiClient(
-            Configuration(username=username, password=api_key, host=host)
+            Configuration(
+                username=explainaboard_client.username,
+                password=explainaboard_client.api_key,
+                host=host,
+            )
         )
         self._default_api: DefaultApi = DefaultApi(api_client)
         self._active: bool = True
