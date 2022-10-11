@@ -137,3 +137,7 @@ def main():
         )
     except Exception:
         print(f"failed to evaluate system {args.system_name}")
+
+
+if __name__ == "__main__":
+    main()
