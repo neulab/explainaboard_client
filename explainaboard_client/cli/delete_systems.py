@@ -3,7 +3,6 @@ import sys
 import traceback
 
 from explainaboard_api_client import ApiException
-from explainaboard_api_client.model.systems_return import SystemsReturn
 from explainaboard_client import Config, ExplainaboardClient
 from tqdm import tqdm
 
@@ -53,46 +52,45 @@ def main():
         args.server,
     )
     client = ExplainaboardClient(client_config)
-    try:
-        system_strs = []
-        for system_id in tqdm(args.system_ids, desc="retrieving system info"):
-            kwargs = {"system_id": system_id}
-            try:
-                system: SystemsReturn = client.systems_get_by_id(**kwargs)
-                system_dict = system.to_dict()
 
-                dataset = system_dict["system_info"].get(
-                    "dataset_name", "custom dataset"
-                )
-                subdataset = system_dict["system_info"].get(
-                    "sub_dataset_name", "custom dataset"
-                )
-                system_strs.append(
-                    f"id={system_id}, "
-                    f'name={system_dict["system_info"]["system_name"]}, '
-                    f"dataset={dataset}, "
-                    f"subdataset={subdataset}, "
-                    f'created_at={str(system_dict["created_at"])}'
-                )
-            except ApiException:
-                print(f"Could not find system ID {system_id}", file=sys.stderr)
-                return
-        print(
-            f"--- Preparing to delete {len(system_strs)} systems:\n"
-            + "\n".join(system_strs)
-        )
-        if not args.skip_confirmation:
-            print("Are you sure? (y/N)")
-            line = sys.stdin.readline()
-            if line.strip() != "y":
-                print("Did not receive confirmation")
-                return
-        for system_id in args.system_ids:
-            client.systems_delete_by_id(system_id)
-        print(f"Deleted {len(system_strs)} systems")
-    except Exception:
-        traceback.print_exc()
-        print("Failed to delete systems")
+    system_strs = []
+    for system_id in tqdm(args.system_ids, desc="retrieving system info"):
+        try:
+            system_dict = client.get_system(system_id)
+
+            dataset = system_dict["system_info"].get("dataset_name", "custom dataset")
+            subdataset = system_dict["system_info"].get(
+                "sub_dataset_name", "custom dataset"
+            )
+            system_strs.append(
+                f"id={system_id}, "
+                f'name={system_dict["system_info"]["system_name"]}, '
+                f"dataset={dataset}, "
+                f"subdataset={subdataset}, "
+                f'created_at={str(system_dict["created_at"])}'
+            )
+        except ApiException:
+            print(f"Could not find system ID {system_id}", file=sys.stderr)
+            return
+    print(
+        f"--- Preparing to delete {len(system_strs)} systems:\n"
+        + "\n".join(system_strs)
+    )
+    if not args.skip_confirmation:
+        print("Are you sure? (y/N)")
+        line = sys.stdin.readline()
+        if line.strip() != "y":
+            print("Did not receive confirmation")
+            return
+    deleted_systems = 0
+    for system_id in args.system_ids:
+        try:
+            client.delete_system(system_id)
+            deleted_systems += 1
+        except Exception:
+            print(f"Could not delete system ID {system_id}", file=sys.stderr)
+            traceback.print_exc()
+    print(f"Deleted {deleted_systems} systems")
 
 
 if __name__ == "__main__":
