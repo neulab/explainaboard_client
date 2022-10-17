@@ -7,7 +7,8 @@ from explainaboard_api_client.model.system import System
 from explainaboard_api_client.model.system_create_props import SystemCreateProps
 from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.system_output_props import SystemOutputProps
-from explainaboard_client import Config, ExplainaboardClient
+import explainaboard_client
+from explainaboard_client import ExplainaboardClient
 from explainaboard_client.utils import generate_dataset_id
 
 
@@ -29,13 +30,21 @@ def main():
         description="A command-line tool to submit to benchmarks "
         "on the ExplainaBoard web interface."
     )
+    # ---- Authentication arguments
     parser.add_argument(
-        "--email",
+        "--username",
         type=str,
-        required=True,
-        help="Email address used to sign in to ExplainaBoard",
+        default=explainaboard_client.username,
+        help="Username used to sign in to ExplainaBoard. Defaults to the EB_USERNAME "
+        "environment variable.",
     )
-    parser.add_argument("--api_key", type=str, required=True, help="Your API key")
+    parser.add_argument(
+        "--api_key",
+        type=str,
+        default=explainaboard_client.api_key,
+        help="API key for ExplainaBoard. Defaults to the EB_API_KEY environment "
+        "variable.",
+    )
 
     parser.add_argument(
         "--public", action="store_true", help="Make the evaluation results public"
@@ -55,14 +64,6 @@ def main():
 
     parser.add_argument(
         "--shared_users", type=str, nargs="+", help="Emails of users to share with"
-    )
-    parser.add_argument(
-        "--server",
-        type=str,
-        required=False,
-        default="main",
-        choices=["main", "staging", "local"],
-        help='Which server to use, "main" should be sufficient',
     )
     args = parser.parse_args()
 
@@ -133,12 +134,9 @@ def main():
         create_props = SystemCreateProps(
             metadata=metadata, system_output=system_output, custom_datset=None
         )
-        client_config = Config(
-            args.email,
-            args.api_key,
-            args.server,
-        )
-        client = ExplainaboardClient(client_config)
+        explainaboard_client.username = args.username
+        explainaboard_client.api_key = args.api_key
+        client = ExplainaboardClient()
 
         result: System = client.systems_post(create_props)
         try:

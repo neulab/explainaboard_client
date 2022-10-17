@@ -3,7 +3,8 @@ import sys
 import traceback
 
 from explainaboard_api_client import ApiException
-from explainaboard_client import Config, ExplainaboardClient
+import explainaboard_client
+from explainaboard_client import ExplainaboardClient
 from tqdm import tqdm
 
 
@@ -14,21 +15,20 @@ def main():
         description="A command-line tool to delete systems from the ExplainaBoard "
         "online database."
     )
-    # --- Authentication arguments
+    # ---- Authentication arguments
     parser.add_argument(
-        "--email",
+        "--username",
         type=str,
-        required=True,
-        help="Email address used to sign in to ExplainaBoard",
+        default=explainaboard_client.username,
+        help="Username used to sign in to ExplainaBoard. Defaults to the EB_USERNAME "
+        "environment variable.",
     )
-    parser.add_argument("--api_key", type=str, required=True, help="Your API key")
     parser.add_argument(
-        "--server",
+        "--api_key",
         type=str,
-        required=False,
-        default="main",
-        choices=["main", "staging", "local"],
-        help='Which server to use, "main" should be sufficient',
+        default=explainaboard_client.api_key,
+        help="API key for ExplainaBoard. Defaults to the EB_API_KEY environment "
+        "variable.",
     )
     # --- Query arguments
     parser.add_argument(
@@ -46,12 +46,9 @@ def main():
     )
     args = parser.parse_args()
 
-    client_config = Config(
-        args.email,
-        args.api_key,
-        args.server,
-    )
-    client = ExplainaboardClient(client_config)
+    explainaboard_client.username = args.username
+    explainaboard_client.api_key = args.api_key
+    client = ExplainaboardClient()
 
     system_strs = []
     for system_id in tqdm(args.system_ids, desc="retrieving system info"):

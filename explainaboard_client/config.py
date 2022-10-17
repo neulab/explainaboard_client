@@ -4,8 +4,6 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Literal, Optional
 
-from explainaboard_api_client import Configuration
-
 
 @dataclass
 class HostConfig:
@@ -31,40 +29,9 @@ ENV_HOST_MAP: defaultdict[str, HostConfig] = defaultdict(
 )
 
 
-@dataclass
-class Config:
-    """Configurations for explainaboard CLI
+def get_host(environment: Literal["main", "staging", "local"]):
+    return ENV_HOST_MAP[environment].host
 
-    Vars:
-        user_email: The email of the user
-        api_key: API key for explainaboard
-        environment: Environment where the call should be made
-        host: A custom host to use
-    """
 
-    user_email: str
-    api_key: str
-    environment: Literal["main", "staging", "local"] = "main"
-    host: Optional[str] = None
-
-    def __post_init__(self):
-        if self.environment not in {"main", "staging", "local"}:
-            raise ValueError(f"{self.environment} is not a valid environment")
-
-    @staticmethod
-    def get_env_host_map():
-        return ENV_HOST_MAP
-
-    def get_env(self):
-        return ENV_HOST_MAP[self.environment]
-
-    def to_client_config(self):
-        client_config = Configuration()
-        client_config.host = ENV_HOST_MAP[self.environment].host
-
-        if self.host:
-            client_config.host = self.host
-
-        client_config.username = self.user_email
-        client_config.password = self.api_key
-        return client_config
+def get_frontend(environment: Literal["main", "staging", "local"]):
+    return ENV_HOST_MAP[environment].frontend

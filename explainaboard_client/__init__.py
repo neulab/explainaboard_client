@@ -1,5 +1,11 @@
-from explainaboard_api_client import models
-from explainaboard_client.client import ExplainaboardClient
-from explainaboard_client.config import Config
+from __future__ import annotations
 
-__all__ = ["ExplainaboardClient", "Config", "models"]
+from typing import Literal
+
+from explainaboard_client.client import ExplainaboardClient
+
+__all__ = ["ExplainaboardClient"]
+
+username: str | None = None
+api_key: str | None = None
+environment: Literal["main", "staging", "local"] = "main"
