@@ -1,4 +1,6 @@
 import argparse
+import json
+import traceback
 
 import explainaboard_client
 from explainaboard_client import ExplainaboardClient
@@ -104,12 +106,9 @@ def main():
         "--shared_users", type=str, nargs="+", help="Emails of users to share with"
     )
     parser.add_argument(
-        "--environment",
+        "--report_file",
         type=str,
-        required=False,
-        default="main",
-        choices=["main", "staging", "local"],
-        help='Which environment to use, "main" should be sufficient',
+        help="A path to a file where the JSON report will be written",
     )
     args = parser.parse_args()
 
@@ -135,14 +134,18 @@ def main():
             public=args.public,
             shared_users=args.shared_users,
         )
-        frontend = get_frontend(args.environment)
+        frontend = get_frontend(explainaboard_client.environment)
         sys_id = evaluation_data["system_id"]
+        if args.report_file is not None:
+            with open(args.report_file, "w") as fout:
+                json.dump(evaluation_data, fout, default=str)
         print(
             f"successfully evaluated system {args.system_name} with ID {sys_id}\n"
             f"view it at {frontend}/systems?system_id={sys_id}\n"
         )
     except Exception:
         print(f"failed to evaluate system {args.system_name}")
+        traceback.print_exc()
 
 
 if __name__ == "__main__":
