@@ -139,10 +139,15 @@ def main():
         if args.report_file is not None:
             with open(args.report_file, "w") as fout:
                 json.dump(evaluation_data, fout, default=str)
-        print(
-            f"successfully evaluated system {args.system_name} with ID {sys_id}\n"
-            f"view it at {frontend}/systems?system_id={sys_id}\n"
-        )
+        print(f"Successfully evaluated system {args.system_name} with ID {sys_id}")
+        print(f"View it at {frontend}/systems?system_id={sys_id}")
+        overall_results = evaluation_data["system_info"]["results"]["overall"][0]
+        for result in overall_results:
+            print(
+                f'{result["metric_name"]}: {result["value"]:.4f} '
+                f'[{result["confidence_score_low"]:.4f}, '
+                f'{result["confidence_score_high"]:.4f}]'
+            )
     except Exception:
         print(f"failed to evaluate system {args.system_name}")
         traceback.print_exc()
