@@ -26,7 +26,10 @@ python -m explainaboard_client.cli.evaluate_system \
 You will need to fill in all the settings appropriately, for example:
 * `[TASK_ID]` is the ID of the task you want to perform. A full list is [here](https://github.com/neulab/explainaboard_web/blob/main/backend/src/impl/tasks.py).
 * `[MODEL_NAME]` is whatever name you want to give to your model.
-* `[SYSTEM_OUTPUT_FILE]` is the file that you want to evaluate.
+* `[SYSTEM_OUTPUT_FILE]` is the file that you want to evaluate. The file format depends
+  on the task, and you can see the list of
+  [ExplainaBoard task file formats](https://github.com/neulab/ExplainaBoard/blob/main/docs/task_file_formats.md)
+  for more details..
 * `[FILE_TYPE]` is the type of the file, "text", "tsv", "csv", "conll", or "json".
 * `[DATASET]`, `[SUB_DATASET]` and `[SPLIT]` indicate which dataset you're evaluating
   a system output for.
