@@ -23,7 +23,7 @@ You can save these into environmental variables for convenient use in the comman
 below:
 
 ```
-export EB_EMAIL="[your email]"
+export EB_USERNAME="[your username]"
 export EB_API_KEY="[your API key]"
 ```
 
@@ -41,7 +41,7 @@ page then you can use something like the following command:
 
 ```
 python -m explainaboard_client.cli.evaluate_system \
-  --email $EB_EMAIL --api_key $EB_API_KEY \
+  --username $EB_USERNAME --api_key $EB_API_KEY \
   --task [TASK_ID] \
   --system_name [MODEL_NAME] \
   --system_output_file [SYSTEM_OUTPUT] --system_output_file_type [FILE_TYPE] \
@@ -68,7 +68,7 @@ that are not supported by DataLab yet:
 
 ```
 python -m explainaboard_client.cli.evaluate_system \
-  --email $EB_EMAIL --api_key $EB_API_KEY \
+  --username $EB_USERNAME --api_key $EB_API_KEY \
   --task [TASK_ID] \
   --system_name [MODEL_NAME] \
   --system_output_file [SYSTEM_OUTPUT] --system_output_file_type [FILE_TYPE] \
@@ -85,7 +85,7 @@ be happy to help out!
 using the following syntax
 ```
 python -m explainaboard_client.cli.find_systems \
-  --email $EB_EMAIL --api_key $EB_API_KEY --output_format tsv
+  --username $EB_USERNAME --api_key $EB_API_KEY --output_format tsv
 ```
 By default this outputs in a summarized TSV format (similar to the online system
 browser), but you can set `--output_format json` to get more extensive information.
@@ -97,7 +97,7 @@ any arguments.
 command:
 ```
 python -m explainaboard_client.cli.delete_systems \
-  --email $EB_EMAIL --api_key $EB_API_KEY --system_ids XXX YYY
+  --username $EB_USERNAME --api_key $EB_API_KEY --system_ids XXX YYY
 ```
 Here the `system_ids` are the unique identifier of each system returned in the
 `system_id` field of the JSON returned by the `find_systems` command above. The system
@@ -110,7 +110,7 @@ you can follow the command below:
 
 ```shell
 python -m explainaboard_client.cli.evaluate_benchmark \
-      --email XXX  \
+      --username XXX  \
       --api_key YYY \
       --system_name your_system \
       --system_outputs submissions/* \
@@ -118,7 +118,7 @@ python -m explainaboard_client.cli.evaluate_benchmark \
       --server local
 ```
 where
-* `--email`: the email of your explainaboard account
+* `--username`: the email of your explainaboard account
 * `--api_key`: your API key
 * `--system_name`: the system name of your submission. Note: this assumes that all
 system output share one system name.
