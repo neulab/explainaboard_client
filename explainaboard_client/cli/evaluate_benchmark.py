@@ -39,7 +39,7 @@ def main():
         "environment variable.",
     )
     parser.add_argument(
-        "--api_key",
+        "--api-key",
         type=str,
         default=explainaboard_client.api_key,
         help="API key for ExplainaBoard. Defaults to the EB_API_KEY environment "
@@ -50,20 +50,20 @@ def main():
         "--public", action="store_true", help="Make the evaluation results public"
     )
 
-    parser.add_argument("--system_name", type=str, help="system_name")
+    parser.add_argument("--system-name", type=str, help="system_name")
 
     parser.add_argument("--benchmark", type=str, help="benchmark config")
 
     parser.add_argument(
-        "--system_outputs", type=str, nargs="+", help="benchmark config"
+        "--system-outputs", type=str, nargs="+", help="benchmark config"
     )
 
     parser.add_argument(
-        "--system_details", type=str, help="File of system details in JSON format"
+        "--system-details", type=str, help="File of system details in JSON format"
     )
 
     parser.add_argument(
-        "--shared_users", type=str, nargs="+", help="Emails of users to share with"
+        "--shared-users", type=str, nargs="+", help="Emails of users to share with"
     )
     args = parser.parse_args()
 

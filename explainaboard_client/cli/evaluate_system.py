@@ -24,7 +24,7 @@ def main():
         "environment variable.",
     )
     parser.add_argument(
-        "--api_key",
+        "--api-key",
         type=str,
         default=explainaboard_client.api_key,
         help="API key for ExplainaBoard. Defaults to the EB_API_KEY environment "
@@ -39,19 +39,19 @@ def main():
         help="What task you will be analyzing",
     )
     parser.add_argument(
-        "--system_name",
+        "--system-name",
         type=str,
         required=True,
         help="Name of the system that you are evaluating",
     )
     parser.add_argument(
-        "--system_output_file",
+        "--system-output-file",
         type=str,
         required=True,
         help="Path to the system output file",
     )
     parser.add_argument(
-        "--system_output_file_type",
+        "--system-output-file-type",
         type=str,
         choices=FileType.list(),
         help="File type of the system output (eg text/json/tsv/conll)",
@@ -61,7 +61,7 @@ def main():
         "--dataset", type=str, help="A dataset name from DataLab"
     )
     parser.add_argument(
-        "--sub_dataset",
+        "--sub-dataset",
         type=str,
         required=False,
         help="A sub-dataset name from DataLab",
@@ -74,39 +74,39 @@ def main():
         help="The name of the dataset split to process",
     )
     dataset_group.add_argument(
-        "--custom_dataset_file", type=str, help="The path to a custom dataset file"
+        "--custom-dataset-file", type=str, help="The path to a custom dataset file"
     )
     parser.add_argument(
-        "--custom_dataset_file_type",
+        "--custom-dataset-file-type",
         type=str,
         required=False,
         choices=FileType.list(),
         help="File type of the custom dataset (eg text/json/tsv/conll)",
     )
     parser.add_argument(
-        "--metric_names",
+        "--metric-names",
         type=str,
         nargs="+",
         required=False,
         help="The metrics to compute, leave blank for task defaults",
     )
     parser.add_argument(
-        "--source_language", type=str, help="The language on the input side"
+        "--source-language", type=str, help="The language on the input side"
     )
     parser.add_argument(
-        "--target_language", type=str, help="The language on the output side"
+        "--target-language", type=str, help="The language on the output side"
     )
     parser.add_argument(
-        "--system_details_file", type=str, help="File of system details in JSON format"
+        "--system-details-file", type=str, help="File of system details in JSON format"
     )
     parser.add_argument(
         "--public", action="store_true", help="Make the evaluation results public"
     )
     parser.add_argument(
-        "--shared_users", type=str, nargs="+", help="Emails of users to share with"
+        "--shared-users", type=str, nargs="+", help="Emails of users to share with"
     )
     parser.add_argument(
-        "--report_file",
+        "--report-file",
         type=str,
         help="A path to a file where the JSON report will be written",
     )

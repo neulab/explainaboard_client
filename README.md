@@ -33,12 +33,12 @@ command line using a command like this.
 
 ```shell
 python -m explainaboard_client.cli.evaluate_system \
-  --username $EB_USERNAME --api_key $EB_API_KEY \
+  --username $EB_USERNAME --api-key $EB_API_KEY \
   --task [TASK_ID] \
-  --system_name [MODEL_NAME] \
-  --system_output_file [SYSTEM_OUTPUT] --system_output_file_type [FILE_TYPE] \
-  --dataset [DATASET] --sub_dataset [SUB_DATASET] --split [SPLIT] \
-  --source_language [SOURCE] --target_language [TARGET] \
+  --system-name [MODEL_NAME] \
+  --system-output-file [SYSTEM_OUTPUT] --system-output-file-type [FILE_TYPE] \
+  --dataset [DATASET] --sub-dataset [SUB_DATASET] --split [SPLIT] \
+  --source-language [SOURCE] --target-language [TARGET] \
   [--public]
 ```
 

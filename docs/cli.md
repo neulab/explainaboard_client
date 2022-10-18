@@ -14,12 +14,12 @@ page then you can use something like the following command:
 
 ```shell
 python -m explainaboard_client.cli.evaluate_system \
-  --username $EB_USERNAME --api_key $EB_API_KEY \
+  --username $EB_USERNAME --api-key $EB_API_KEY \
   --task [TASK_ID] \
-  --system_name [MODEL_NAME] \
-  --system_output_file [SYSTEM_OUTPUT] --system_output_file_type [FILE_TYPE] \
-  --dataset [DATASET] --sub_dataset [SUB_DATASET] --split [SPLIT] \
-  --source_language [SOURCE] --target_language [TARGET] \
+  --system-name [MODEL_NAME] \
+  --system-output-file [SYSTEM_OUTPUT] --system-output-file-type [FILE_TYPE] \
+  --dataset [DATASET] --sub-dataset [SUB_DATASET] --split [SPLIT] \
+  --source-language [SOURCE] --target-language [TARGET] \
   [--public]
 ```
 
@@ -46,12 +46,12 @@ that are not supported by ExplainaBoard yet:
 
 ```shell
 python -m explainaboard_client.cli.evaluate_system \
-  --username $EB_USERNAME --api_key $EB_API_KEY \
+  --username $EB_USERNAME --api-key $EB_API_KEY \
   --task [TASK_ID] \
-  --system_name [MODEL_NAME] \
-  --system_output_file [SYSTEM_OUTPUT] --system_output_file_type [FILE_TYPE] \
-  --custom_dataset_file [CUSTOM_DATASET] --custom_dataset_file_type [FILE_TYPE] \
-  --source_language [SOURCE] --target_language [TARGET]
+  --system-name [MODEL_NAME] \
+  --system-output-file [SYSTEM_OUTPUT] --system-output-file-type [FILE_TYPE] \
+  --custom-dataset-file [CUSTOM_DATASET] --custom-dataset-file-type [FILE_TYPE] \
+  --source-language [SOURCE] --target-language [TARGET]
 ```
 
 with similar file and file-type arguments to the system output above. If you're
@@ -65,10 +65,10 @@ You can also find systems that have already been evaluated
 using the following syntax
 ```shell
 python -m explainaboard_client.cli.find_systems \
-  --username $EB_USERNAME --api_key $EB_API_KEY --output_format tsv
+  --username $EB_USERNAME --api-key $EB_API_KEY --output-format tsv
 ```
 By default this outputs in a summarized TSV format (similar to the online system
-browser), but you can set `--output_format json` to get more extensive information.
+browser), but you can set `--output-format json` to get more extensive information.
 There are many options for how you can specify which systems you want to find, which you
 can take a look at by running `python -m explainaboard_client.cli.find_systems` without
 any arguments.
@@ -79,7 +79,7 @@ You can delete existing system outputs using the following
 command:
 ```shell
 python -m explainaboard_client.cli.delete_systems \
-  --username $EB_USERNAME --api_key $EB_API_KEY --system_ids XXX YYY
+  --username $EB_USERNAME --api-key $EB_API_KEY --system-ids XXX YYY
 ```
 Here the `system_ids` are the unique identifier of each system returned in the
 `system_id` field of the JSON returned by the `find_systems` command above. The system
@@ -93,16 +93,16 @@ you can follow the command below:
 ```shell
 python -m explainaboard_client.cli.evaluate_benchmark \
       --username XXX  \
-      --api_key YYY \
-      --system_name your_system \
-      --system_outputs submissions/* \
+      --api-key YYY \
+      --system-name your_system \
+      --system-outputs submissions/* \
       --benchmark benchmark_config.json \
       --server local
 ```
 where
 * `--username`: the email of your explainaboard account
-* `--api_key`: your API key
-* `--system_name`: the system name of your submission. Note: this assumes that all
+* `--api-key`: your API key
+* `--system-name`: the system name of your submission. Note: this assumes that all
 system output share one system name.
 * `--benchmark`: the benchmark config file (you can check out this [doc](TBC) to see how to configure the benchmark.)
 * `system_outputs`: system output files. Note that the order of `system_outputs` files should
