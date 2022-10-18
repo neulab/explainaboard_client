@@ -87,7 +87,7 @@ def main():
         except Exception:
             print(f"Could not delete system ID {system_id}", file=sys.stderr)
             traceback.print_exc()
-    print(f"Deleted {deleted_systems} systems")
+    print(f"Deleted {deleted_systems} system{'' if deleted_systems == 1 else 's'}")
 
 
 if __name__ == "__main__":
