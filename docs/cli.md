@@ -85,7 +85,7 @@ Here the `system_ids` are the unique identifier of each system returned in the
 `system_id` field of the JSON returned by the `find_systems` command above. The system
 IDs are *not* the system name as displayed in the interface.
 
-### Evaluating Systems on Benchmarks from the Command Line
+## Evaluating Systems on Benchmarks from the Command Line
 Instead of simply evaluating an individual system, another common scenario is 
 to submit a group of systems to a benchmark (e.g., GLUE). To achieve this goal,
 you can follow the command below: 

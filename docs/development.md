@@ -2,6 +2,15 @@
 
 This documentation stores notes for developers.
 
+## Installation
+
+If you would like to install the client for development, you can run the following
+command.
+
+```shell
+pip install ".[dev]"
+```
+
 ## client and api_client packages
 
 There are two packages associated with this CLI: `explainaboard_api_client` and `explainaboard_client`

@@ -1,7 +1,7 @@
-# Programmatic Access to ExplainaBoard
+# Accessing ExplainaBoard through Python
 
 You can programmatically evaluate systems using ExplainaBoard using calls to the
-ExplainaBoard client. See the description below, or the examples in the
+ExplainaBoard client Python API. See the description below, or the examples in the
 [API example code](/example/api) directory.
 
 ## Evaluating System Output Files

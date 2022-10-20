@@ -25,31 +25,11 @@ export EB_USERNAME="[your username]"
 export EB_API_KEY="[your API key]"
 ```
 
-## Command-line Usage
+## Use in Python
 
 The most common usage of this client will probably be to
-evaluate systems on the ExplainaBoard server. You can do that from the
-command line using a command like this.
-
-```shell
-python -m explainaboard_client.cli.evaluate_system \
-  --username $EB_USERNAME --api-key $EB_API_KEY \
-  --task [TASK_ID] \
-  --system-name [MODEL_NAME] \
-  --system-output-file [SYSTEM_OUTPUT] --system-output-file-type [FILE_TYPE] \
-  --dataset [DATASET] --sub-dataset [SUB_DATASET] --split [SPLIT] \
-  --source-language [SOURCE] --target-language [TARGET] \
-  [--public]
-```
-
-For more details on precisely how to specify all the variables, as well as how to do
-other things such as search for and delete systems from the command line, click through
-to the [command line documentation](docs/cli.md).
-
-## Programmatic Usage
-
-Below is an example of how you can evaluate a system using ExplainaBoard through your
-programs.
+evaluate systems on the ExplainaBoard server.
+Below is an example of how you can do this in Python.
 
 ```python
 import os
@@ -72,5 +52,28 @@ evaluation_result = client.evaluate_system_file(
 )
 ```
 
-For more details on other API-based usage, please see the
-[summary of programmatic access](docs/api.md).
+For more details on precisely how to specify all the variables, as well as how to do
+other things such as search for and delete systems, see the
+[documentation of the Python API](docs/python_api.md).
+
+## Use from the Command Line
+
+You can also evaluate systems from the command line like this.
+
+```shell
+python -m explainaboard_client.cli.evaluate_system \
+  --task text-classification \
+  --system-name text-classification-test \
+  --system-output-file example/data/sst2-lstm-output.txt \
+  --system-output-file-type text \
+  --dataset sst2 \
+  --split test \
+  --source-language 'en'
+```
+
+For more details, see the [command line documentation](docs/cli.md).
+
+## Having Trouble?
+
+Please [open an issue](https://github.com/neulab/explainaboard_client/issues) on the
+issues page and we'll be happy to help!
