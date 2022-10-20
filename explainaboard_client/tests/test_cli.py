@@ -53,7 +53,7 @@ class TestCLI(TestEndpointsE2E):
             # print(f'---- evaluate_system stdout ----\n{stdout_content}')
             stdout_lines = stdout_content.strip().split("\n")
             m = re.match(
-                r"successfully evaluated system test_cli with ID ([0-9a-f]+)",
+                r"Successfully evaluated system test_cli with ID ([0-9a-f]+)",
                 stdout_lines[0],
             )
             self.assertIsNotNone(m, msg=f"evaluation failed:\n{stdout_content=}")
