@@ -105,7 +105,7 @@ where
 * `--system-name`: the system name of your submission. Note: this assumes that all
 system output share one system name.
 * `--benchmark`: the benchmark config file (you can check out this [doc](TBC) to see how to configure the benchmark.)
-* `system_outputs`: system output files. Note that the order of `system_outputs` files should
+* `--system-outputs`: system output files. Note that the order of `--system-outputs` files should
 strictly correspond to the dataset order of `datasets` in `benchmark_config.json`.
 * By default, your systems will be private, but if you add the `--public` flag, they
   will be made public on the public leaderboards and system listing.

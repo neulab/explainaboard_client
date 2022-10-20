@@ -29,7 +29,7 @@ where
 * `--system-name`: the system name of your submission. Note: this assumes that all
 system output share one system name.
 * `--benchmark`: the benchmark config file
-* `system_outputs`: system output files, which usually contain multiple files, whose names
+* `--system-outputs`: system output files, which usually contain multiple files, whose names
 should be defined starting with the number (e.g., `0`, `1`, `2`) to specify the order of these
 system outputs. The order  should
 strictly correspond to the dataset order of `datasets` in `config_gaokao.json`.
