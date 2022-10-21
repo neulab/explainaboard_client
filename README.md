@@ -54,7 +54,7 @@ evaluation_result = client.evaluate_system_file(
 
 For more details on precisely how to specify all the variables, as well as how to do
 other things such as search for and delete systems, see the
-[documentation of the Python API](docs/python_api.md).
+[documentation of the Python API](docs/python_api/introduction.md).
 
 ## Use from the Command Line
 
