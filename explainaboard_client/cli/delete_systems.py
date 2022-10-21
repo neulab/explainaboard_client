@@ -24,7 +24,7 @@ def main():
         "environment variable.",
     )
     parser.add_argument(
-        "--api_key",
+        "--api-key",
         type=str,
         default=explainaboard_client.api_key,
         help="API key for ExplainaBoard. Defaults to the EB_API_KEY environment "
@@ -32,7 +32,7 @@ def main():
     )
     # --- Query arguments
     parser.add_argument(
-        "--system_ids",
+        "--system-ids",
         type=str,
         nargs="+",
         required=True,
@@ -40,7 +40,7 @@ def main():
     )
     # --- Procedural arguments
     parser.add_argument(
-        "--skip_confirmation",
+        "--skip-confirmation",
         action="store_true",
         help="Skip the confirmation dialog",
     )

@@ -17,19 +17,19 @@ datasets of this benchmark.
 ```shell
 python -m explainaboard_client.cli.evaluate_benchmark \
       --email XXX  \
-      --api_key YYY \
-      --system_name my_system \
-      --system_outputs submissions/* \
+      --api-key YYY \
+      --system-name my_system \
+      --system-outputs submissions/* \
       --benchmark config_gaokao.json \
       --server local
 ```
 where
 * `--email`: the email of your explainaboard account
-* `--api_key`: your API key
-* `--system_name`: the system name of your submission. Note: this assumes that all
+* `--api-key`: your API key
+* `--system-name`: the system name of your submission. Note: this assumes that all
 system output share one system name.
 * `--benchmark`: the benchmark config file
-* `system_outputs`: system output files, which usually contain multiple files, whose names
+* `--system-outputs`: system output files, which usually contain multiple files, whose names
 should be defined starting with the number (e.g., `0`, `1`, `2`) to specify the order of these
 system outputs. The order  should
 strictly correspond to the dataset order of `datasets` in `config_gaokao.json`.

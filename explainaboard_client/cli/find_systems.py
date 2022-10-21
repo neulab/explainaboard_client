@@ -23,7 +23,7 @@ def main():
         "environment variable.",
     )
     parser.add_argument(
-        "--api_key",
+        "--api-key",
         type=str,
         default=explainaboard_client.api_key,
         help="API key for ExplainaBoard. Defaults to the EB_API_KEY environment "
@@ -31,7 +31,7 @@ def main():
     )
     # --- Query arguments
     parser.add_argument(
-        "--system_name",
+        "--system-name",
         type=str,
         help="Fuzzy match for system name",
     )
@@ -61,14 +61,14 @@ def main():
         help="Email of the creator of the system",
     )
     parser.add_argument(
-        "--shared_users",
+        "--shared-users",
         type=str,
         nargs="+",
         help="Emails of users with which the system is shared",
     )
     # ---- Display settings
     parser.add_argument(
-        "--output_format",
+        "--output-format",
         type=str,
         default="tsv",
         choices=["tsv", "json"],
@@ -81,19 +81,19 @@ def main():
         help="Which page to retrieve",
     )
     parser.add_argument(
-        "--page_size",
+        "--page-size",
         type=int,
         default=20,
         help="The number of items on each page. Set to 0 for all.",
     )
     parser.add_argument(
-        "--sort_field",
+        "--sort-field",
         type=str,
         help="Which field to sort by. Supports `created_at` and metric names "
         "(e.g. Accuracy)",
     )
     parser.add_argument(
-        "--sort_direction",
+        "--sort-direction",
         type=str,
         default="desc",
         choices=["desc", "asc"],

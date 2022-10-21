@@ -63,12 +63,12 @@ You can also evaluate systems from the command line like this.
 ```shell
 python -m explainaboard_client.cli.evaluate_system \
   --task text-classification \
-  --system_name text-classification-test \
-  --system_output_file example/data/sst2-lstm-output.txt \
-  --system_output_file_type text \
+  --system-name text-classification-test \
+  --system-output-file example/data/sst2-lstm-output.txt \
+  --system-output-file-type text \
   --dataset sst2 \
   --split test \
-  --source_language 'en'
+  --source-language 'en'
 ```
 
 For more details, see the [command line documentation](docs/cli.md).
