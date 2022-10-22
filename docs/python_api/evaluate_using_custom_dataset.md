@@ -22,8 +22,8 @@ that for the dataset file, we can preprocess it into `tsv` or `json` format, and
  `tsv` (e.g., [`dataset.tsv`](../example/data/machine_translation/dataset.tsv))
   and
   `text` (e.g., [`system_output.txt`](../example/data/machine_translation/system_output.txt))
-  accordingly, then perform
-following commands to evaluate your systems
+  accordingly. You can then use the
+following code to evaluate your system
 
 ```python
 import os
