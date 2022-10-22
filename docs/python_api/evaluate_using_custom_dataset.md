@@ -18,7 +18,7 @@ We will illustrate the above process using the `machine-translation` task as an 
 * from the [doc](https://github.com/neulab/ExplainaBoard/blob/main/docs/task_file_formats.md) we see
 that for the dataset file, we can preprocess it into `tsv` or `json` format, and for the output file, 
 `json` and `text` are allowed. 
-* Suppose that you process dataset and system output file into
+* Suppose that you process the dataset and system output files into
  `tsv` (e.g., [`dataset.tsv`](../example/data/machine_translation/dataset.tsv))
   and
   `text` (e.g., [`system_output.txt`](../example/data/machine_translation/system_output.txt))
