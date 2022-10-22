@@ -34,14 +34,12 @@ def main():
     parser.add_argument(
         "--username",
         type=str,
-        default=os.environ.get("EB_USERNAME"),
         help="Username used to sign in to ExplainaBoard. Defaults to the EB_USERNAME "
         "environment variable.",
     )
     parser.add_argument(
         "--api-key",
         type=str,
-        default=os.environ.get("EB_API_KEY"),
         help="API key for ExplainaBoard. Defaults to the EB_API_KEY environment "
         "variable.",
     )
@@ -134,8 +132,14 @@ def main():
         create_props = SystemCreateProps(
             metadata=metadata, system_output=system_output, custom_datset=None
         )
-        explainaboard_client.username = args.username
-        explainaboard_client.api_key = args.api_key
+        explainaboard_client.username = (
+            args.username
+            if args.username is not None
+            else os.environ.get("EB_USERNAME")
+        )
+        explainaboard_client.api_key = (
+            args.api_key if args.api_key is not None else os.environ.get("EB_API_KEY")
+        )
         client = ExplainaboardClient()
 
         result: System = client.systems_post(create_props)
