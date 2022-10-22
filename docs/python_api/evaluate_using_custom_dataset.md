@@ -16,7 +16,7 @@ FAQ: what do `dataset` and `system output` mean? check [this](https://github.com
 We will illustrate the above process using the `machine-translation` task as an example.
 
 * from the [doc](https://github.com/neulab/ExplainaBoard/blob/main/docs/task_file_formats.md) we see
-for `dataset` file, we can preprocess it into `tsv` or `json` format, and for `output file`, 
+that for the dataset file, we can preprocess it into `tsv` or `json` format, and for the output file, 
 `json` and `text` are allowed. 
 * Suppose that you process dataset and system output file into
  `tsv` (e.g., [`dataset.tsv`](../example/data/machine_translation/dataset.tsv))
