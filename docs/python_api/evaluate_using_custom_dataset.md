@@ -51,7 +51,7 @@ evaluation_result = client.evaluate_system_file(
 # print(evaluation_result)
 ```
 
-* then you can analyze your results either by passing the python dictionary `evaluation_result` or
+* then you can analyze your results either by processing the python dictionary `evaluation_result` or
 interacting with the [web platform](https://explainaboard.inspiredco.ai/systems) 
 
 
