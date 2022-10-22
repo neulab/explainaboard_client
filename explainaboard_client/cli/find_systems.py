@@ -19,14 +19,12 @@ def main():
     parser.add_argument(
         "--username",
         type=str,
-        default="",
         help="Username used to sign in to ExplainaBoard. Defaults to the EB_USERNAME "
         "environment variable.",
     )
     parser.add_argument(
         "--api-key",
         type=str,
-        default="",
         help="API key for ExplainaBoard. Defaults to the EB_API_KEY environment "
         "variable.",
     )
