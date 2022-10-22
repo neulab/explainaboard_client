@@ -13,7 +13,7 @@ FAQ: what do `dataset` and `system output` mean? check [this](https://github.com
 
 
 ## Example
-We will illustrate the above process using `machine-translation` task as an example.
+We will illustrate the above process using the `machine-translation` task as an example.
 
 * from the [doc](https://github.com/neulab/ExplainaBoard/blob/main/docs/task_file_formats.md) we see
 for `dataset` file, we can preprocess it into `tsv` or `json` format, and for `output file`, 
