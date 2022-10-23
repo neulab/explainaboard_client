@@ -44,7 +44,7 @@ client = explainaboard_client.ExplainaboardClient()
 evaluation_result = client.evaluate_system_file(
     task='text-classification',
     system_name='text-classification-test',
-    system_output_file='example/data/sst2-lstm-output.txt',
+    system_output_file='example/data/text_classification/sst2-lstm-output.txt',
     system_output_file_type='text',
     dataset='sst2',
     split='test',
@@ -64,7 +64,7 @@ You can also evaluate systems from the command line like this.
 python -m explainaboard_client.cli.evaluate_system \
   --task text-classification \
   --system-name text-classification-test \
-  --system-output-file example/data/sst2-lstm-output.txt \
+  --system-output-file example/data/text_classification/sst2-lstm-output.txt \
   --system-output-file-type text \
   --dataset sst2 \
   --split test \
