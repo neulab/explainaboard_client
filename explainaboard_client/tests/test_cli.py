@@ -95,6 +95,6 @@ class TestCLI(TestEndpointsE2E):
         with patch("sys.argv", find_args), redirect_stdout(stdout_stream):
             find_systems.main()
         stdout_content = stdout_stream.getvalue()
-        print(stdout_content)
         found_data = json.loads(stdout_content)
-        print(json.dumps(found_data, indent=2))
+        self.assertGreater(len(found_data), 0)
+        self.assertIsNotNone(found_data[0].get())
