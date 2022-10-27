@@ -90,6 +90,7 @@ def main():
         type=str,
         help="Which field to sort by. Supports `created_at` and metric names "
         "(e.g. Accuracy)",
+        default="created_at",
     )
     parser.add_argument(
         "--sort-direction",

@@ -8,7 +8,7 @@ import tempfile
 from unittest.mock import patch
 
 import explainaboard_client
-from explainaboard_client.cli import delete_systems, evaluate_system
+from explainaboard_client.cli import delete_systems, evaluate_system, find_systems
 from explainaboard_client.tests.test_utils import test_artifacts_path, TestEndpointsE2E
 
 
@@ -22,7 +22,7 @@ class TestCLI(TestEndpointsE2E):
             report_file = td / "report.json"
             # Evaluate system
             evaluate_args = [
-                "explainaboard_client.evaluate_system",
+                "explainaboard_client.cli.evaluate_system",
                 "--username",
                 explainaboard_client.username,
                 "--api-key",
@@ -62,7 +62,7 @@ class TestCLI(TestEndpointsE2E):
             self.assertTrue(report_file.exists(), msg="report file not found")
             json.loads(report_file.read_text())
             # Delete system
-            evaluate_args = [
+            delete_args = [
                 "explainaboard_client.delete_systems",
                 "--username",
                 explainaboard_client.username,
@@ -73,9 +73,28 @@ class TestCLI(TestEndpointsE2E):
                 "--skip-confirmation",
             ]
             stdout_stream = io.StringIO()
-            with patch("sys.argv", evaluate_args), redirect_stdout(stdout_stream):
+            with patch("sys.argv", delete_args), redirect_stdout(stdout_stream):
                 delete_systems.main()
             stdout_content = stdout_stream.getvalue()
             # print(f'---- delete_system stdout ----\n{stdout_content}')
             stdout_lines = stdout_content.strip().split("\n")
             self.assertEqual("Deleted 1 system", stdout_lines[-1])
+
+    def test_find_cli(self):
+        # Find systems
+        find_args = [
+            "explainaboard_client.cli.find_systems",
+            "--username",
+            explainaboard_client.username,
+            "--api-key",
+            explainaboard_client.api_key,
+            "--output-format",
+            "json",
+        ]
+        stdout_stream = io.StringIO()
+        with patch("sys.argv", find_args), redirect_stdout(stdout_stream):
+            find_systems.main()
+        stdout_content = stdout_stream.getvalue()
+        print(stdout_content)
+        found_data = json.loads(stdout_content)
+        print(json.dumps(found_data, indent=2))
