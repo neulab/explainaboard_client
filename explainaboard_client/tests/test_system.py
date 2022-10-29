@@ -25,7 +25,7 @@ class TestSystem(TestEndpointsE2E):
         try:
             sys = self._client.get_system(sys_id)
             self.assertIn("dataset", sys)
-            self.assertIn("system_info", sys)
+            self.assertIn("overall_metrics", sys)
         finally:  # cleanup
             self._client.delete_system(sys_id)
 
@@ -66,7 +66,7 @@ class TestSystem(TestEndpointsE2E):
         try:
             sys = self._client.get_system(sys_id)
             self.assertIn("dataset", sys)
-            self.assertIn("system_info", sys)
+            self.assertIn("overall_metrics", sys)
         finally:  # cleanup
             self._client.delete_system(sys_id)
 
@@ -93,7 +93,7 @@ class TestSystem(TestEndpointsE2E):
         sys_id = result["system_id"]
         try:
             sys = self._client.get_system(sys_id)
-            self.assertIn("system_info", sys)
+            self.assertIn("overall_metrics", sys)
         finally:  # cleanup
             self._client.delete_system(sys_id)
 
@@ -115,7 +115,7 @@ class TestSystem(TestEndpointsE2E):
             system_ids.append(result["system_id"])
         all_systems = self._client.find_systems(system_name="test_cli")
         self.assertGreater(len(all_systems), 1)
-        unique_names = {x["system_info"]["system_name"]: 0 for x in all_systems}
+        unique_names = {x["system_name"]: 0 for x in all_systems}
         self.assertIn("test_cli0", unique_names)
         self.assertIn("test_cli1", unique_names)
         for x in system_ids:

@@ -21,10 +21,10 @@ evaluation_result = client.evaluate_system_file(
 # Print out rudimentary results
 print(
     f"Successfully submitted system!\n"
-    f'Name: {evaluation_result["system_info"]["system_name"]}\n'
+    f'Name: {evaluation_result["system_name"]}\n'
     f'ID: {evaluation_result["system_id"]}'
 )
-overall_results = evaluation_result["system_info"]["results"]["overall"][0]
+overall_results = evaluation_result["overall_metrics"]["example"].values()
 for result in overall_results:
     print(
         f'{result["metric_name"]}: {result["value"]:.4f} '

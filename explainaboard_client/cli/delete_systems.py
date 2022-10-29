@@ -57,14 +57,12 @@ def main():
     for system_id in tqdm(args.system_ids, desc="retrieving system info"):
         try:
             system_dict = client.get_system(system_id)
-
-            dataset = system_dict["system_info"].get("dataset_name", "custom dataset")
-            subdataset = system_dict["system_info"].get(
-                "sub_dataset_name", "custom dataset"
-            )
+            dataset_dict = system_dict.get("dataset", {})
+            dataset = dataset_dict.get("dataset_name", "custom dataset")
+            subdataset = dataset_dict.get("sub_dataset", "")
             system_strs.append(
                 f"id={system_id}, "
-                f'name={system_dict["system_info"]["system_name"]}, '
+                f'name={system_dict["system_name"]}, '
                 f"dataset={dataset}, "
                 f"subdataset={subdataset}, "
                 f'created_at={str(system_dict["created_at"])}'

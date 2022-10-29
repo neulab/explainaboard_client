@@ -126,11 +126,13 @@ def main():
             print(json.dumps(system_list))
         else:
             # Get types of metrics
-            metric_names = set()
+            # each item is (analysis_level, metric_name)
+            metric_names: list[tuple[str, str]] = set()
             for system in system_list:
-                metric_names = metric_names.union(
-                    system["system_info"]["results"]["overall"].keys()
-                )
+                for level, metric in system["overall_metrics"].items():
+                    metric_names = metric_names.union(
+                        {(level, metric_name) for metric_name in metric}
+                    )
             metric_list = list(metric_names)
             # Print headings
             headings = [
@@ -144,23 +146,24 @@ def main():
                 "Output Language",
                 "Creator",
                 "Created At",
-            ] + metric_list
+            ] + [f"{level}.{metric_name}" for level, metric_name in metric_list]
             print("\t".join(headings))
             for system in system_list:
                 metrics = [
-                    system["system_info"]["results"]["overall"].get(x, None)
-                    for x in metric_list
+                    system["overall_metrics"].get(level, {}).get(metric_name)
+                    for level, metric_name in metric_list
                 ]
                 metric_strs = [str(x["value"]) if x else "" for x in metrics]
+                dataset = system.get("dataset", {})
                 system_data = [
                     system["system_id"],
-                    system["system_info"]["system_name"],
-                    system["system_info"]["task_name"],
-                    system["system_info"]["dataset_name"],
-                    system["system_info"].get("sub_dataset_name", ""),
-                    system["system_info"]["dataset_split"],
-                    system["system_info"]["source_language"],
-                    system["system_info"]["target_language"],
+                    system["system_name"],
+                    system["task"],
+                    dataset.get("dataset_name", ""),
+                    dataset.get("sub_dataset", ""),
+                    dataset.get("split", ""),
+                    system["source_language"],
+                    system["target_language"],
                     system["creator"],
                     system["created_at"],
                 ] + metric_strs

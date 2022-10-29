@@ -152,7 +152,7 @@ def main():
     # Print accuracy numbers
     if evaluation_data is not None:
         try:
-            overall_results = evaluation_data["system_info"]["results"]["overall"][0]
+            overall_results = evaluation_data["overall_metrics"]["example"].values()
             for result in overall_results:
                 print(
                     f'{result["metric_name"]}: {result["value"]:.4f} '
