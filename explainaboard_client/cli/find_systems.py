@@ -129,7 +129,7 @@ def main():
             # each item is (analysis_level, metric_name)
             metric_names: list[tuple[str, str]] = set()
             for system in system_list:
-                for level, metric in system["overall_metrics"].items():
+                for level, metric in system["results"].items():
                     metric_names = metric_names.union(
                         {(level, metric_name) for metric_name in metric}
                     )
@@ -150,10 +150,10 @@ def main():
             print("\t".join(headings))
             for system in system_list:
                 metrics = [
-                    system["overall_metrics"].get(level, {}).get(metric_name)
+                    system["results"].get(level, {}).get(metric_name)
                     for level, metric_name in metric_list
                 ]
-                metric_strs = [str(x["value"]) if x else "" for x in metrics]
+                metric_strs = [str(x) if x else "" for x in metrics]
                 dataset = system.get("dataset", {})
                 system_data = [
                     system["system_id"],

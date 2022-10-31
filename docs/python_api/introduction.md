@@ -40,11 +40,9 @@ run the following code.
 print(f'Successfully submitted system!\n'
       f'Name: {evaluation_result["system_name"]}\n'
       f'ID: {evaluation_result["system_id"]}')
-overall_results = evaluation_result['overall_metrics']['example'].values()
-for result in overall_results:
-    print(f'{result["metric_name"]}: {result["value"]:.4f} '
-          f'[{result["confidence_score_low"]:.4f}, '
-          f'{result["confidence_score_high"]:.4f}]')
+results = evaluation_result['results']['example'].items()
+for metric_name, value in results:
+    print(f'{metric_name}: {value:.4f}')
 ```
 
 Alternatively, you can dump all of the results and process them in any way you want.

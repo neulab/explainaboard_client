@@ -25,7 +25,7 @@ class TestSystem(TestEndpointsE2E):
         try:
             sys = self._client.get_system(sys_id)
             self.assertIn("dataset", sys)
-            self.assertIn("overall_metrics", sys)
+            self.assertIn("results", sys)
         finally:  # cleanup
             self._client.delete_system(sys_id)
 
@@ -66,7 +66,7 @@ class TestSystem(TestEndpointsE2E):
         try:
             sys = self._client.get_system(sys_id)
             self.assertIn("dataset", sys)
-            self.assertIn("overall_metrics", sys)
+            self.assertIn("results", sys)
         finally:  # cleanup
             self._client.delete_system(sys_id)
 
@@ -93,7 +93,7 @@ class TestSystem(TestEndpointsE2E):
         sys_id = result["system_id"]
         try:
             sys = self._client.get_system(sys_id)
-            self.assertIn("overall_metrics", sys)
+            self.assertIn("results", sys)
         finally:  # cleanup
             self._client.delete_system(sys_id)
 
