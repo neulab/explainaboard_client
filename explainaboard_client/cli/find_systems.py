@@ -127,7 +127,7 @@ def main():
         else:
             # Get types of metrics
             # each item is (analysis_level, metric_name)
-            metric_names: list[tuple[str, str]] = set()
+            metric_names: set[tuple[str, str]] = set()
             for system in system_list:
                 for level, metric in system["results"].items():
                     metric_names = metric_names.union(
