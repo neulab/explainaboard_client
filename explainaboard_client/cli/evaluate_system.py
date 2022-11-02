@@ -152,13 +152,9 @@ def main():
     # Print accuracy numbers
     if evaluation_data is not None:
         try:
-            overall_results = evaluation_data["system_info"]["results"]["overall"][0]
-            for result in overall_results:
-                print(
-                    f'{result["metric_name"]}: {result["value"]:.4f} '
-                    f'[{result["confidence_score_low"]:.4f}, '
-                    f'{result["confidence_score_high"]:.4f}]'
-                )
+            results = evaluation_data["results"]["example"].items()
+            for metric_name, value in results:
+                print(f"{metric_name}: {value:.4f}")
         except Exception:
             pass
 
