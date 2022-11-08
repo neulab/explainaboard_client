@@ -72,9 +72,9 @@ class ExplainaboardClient:
                                 )
                         else:
                             print("Please perform the upgrade manually.")
+                        exit(0)
                     else:
-                        print(e)
-                    exit()
+                        raise e
 
             return wrapper
 
