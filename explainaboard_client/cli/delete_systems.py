@@ -6,6 +6,8 @@ import traceback
 from explainaboard_api_client import ApiException
 import explainaboard_client
 from explainaboard_client import ExplainaboardClient
+from explainaboard_client.exceptions import APIVersionMismatchException
+from explainaboard_client.utils import prompt_for_auto_upgrade_and_exit
 from tqdm import tqdm
 
 
@@ -67,6 +69,8 @@ def main():
                 f"subdataset={subdataset}, "
                 f'created_at={str(system_dict["created_at"])}'
             )
+        except APIVersionMismatchException as e:
+            prompt_for_auto_upgrade_and_exit(e)
         except ApiException:
             print(f"Could not find system ID {system_id}", file=sys.stderr)
             return
@@ -85,6 +89,8 @@ def main():
         try:
             client.delete_system(system_id)
             deleted_systems += 1
+        except APIVersionMismatchException as e:
+            prompt_for_auto_upgrade_and_exit(e)
         except Exception:
             print(f"Could not delete system ID {system_id}", file=sys.stderr)
             traceback.print_exc()

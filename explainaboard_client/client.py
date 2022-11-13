@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from distutils.util import strtobool
 import json
 import logging
 from multiprocessing.pool import ApplyResult
-import os
 import re
 from typing import Literal, Union
 
+from explainaboard_api_client import __name__ as api_client_name
 from explainaboard_api_client import __version__ as api_client_version
 from explainaboard_api_client import ApiClient, Configuration
 from explainaboard_api_client.api.default_api import DefaultApi
@@ -19,6 +18,7 @@ from explainaboard_api_client.model.systems_return import SystemsReturn
 from explainaboard_api_client.models import System, SystemCreateProps, SystemOutputProps
 import explainaboard_client
 from explainaboard_client.config import get_host
+from explainaboard_client.exceptions import APIVersionMismatchException
 from explainaboard_client.tasks import DEFAULT_METRICS, infer_file_type, TaskType
 from explainaboard_client.utils import (
     encode_file_to_base64,
@@ -54,25 +54,26 @@ class ExplainaboardClient:
                     body = json.loads(e.body)
                     if body["error_code"] == 40001:
                         detail = body["detail"]
-                        print(
-                            f"API version error: {detail}\n"
-                            "Would you like an auto-upgrade? [y/n]"
-                        )
-                        if strtobool(input()):
-                            match = re.search("(\\d+\\.\\d+.\\d+)", detail)
-                            if match:
-                                target_version = detail[match.start() : match.end()]
-                                package = f"explainaboard_api_client=={target_version}"
-                                print(f"Installing {package}")
-                                os.system(f"pip install {package}")
-                                print("Installation completed.")
-                            else:
-                                print(
-                                    "Unable to parse API version. Please contact admin."
-                                )
+                        package = api_client_name.replace("_", "-")
+                        match = re.search("(\\d+\\.\\d+.\\d+)", detail)
+                        if match:
+                            required_version = detail[match.start() : match.end()]
+                            message = (
+                                f"{detail} "
+                                + "Installation command: "
+                                + f"pip install {package}=={required_version}"
+                            )
+                            raise APIVersionMismatchException(
+                                message,
+                                package,
+                                required_version,
+                                self._api_client_version,
+                            ) from e
                         else:
-                            print("Please perform the upgrade manually.")
-                        exit(0)
+                            raise RuntimeError(
+                                "Unable to parse required API version from message: "
+                                f"{detail}. Please contact admin."
+                            ) from e
                     else:
                         raise e
 

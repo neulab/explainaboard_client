@@ -6,7 +6,9 @@ import traceback
 import explainaboard_client
 from explainaboard_client import ExplainaboardClient
 from explainaboard_client.config import get_frontend
+from explainaboard_client.exceptions import APIVersionMismatchException
 from explainaboard_client.tasks import FileType, TaskType
+from explainaboard_client.utils import prompt_for_auto_upgrade_and_exit
 
 
 def main():
@@ -144,6 +146,8 @@ def main():
                 json.dump(evaluation_data, fout, default=str)
         print(f"Successfully evaluated system {args.system_name} with ID {sys_id}")
         print(f"View it at {frontend}/systems?system_id={sys_id}")
+    except APIVersionMismatchException as e:
+        prompt_for_auto_upgrade_and_exit(e)
     except Exception:
         evaluation_data = None
         print(f"failed to evaluate system {args.system_name}")
