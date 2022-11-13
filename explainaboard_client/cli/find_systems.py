@@ -5,7 +5,11 @@ import traceback
 
 import explainaboard_client
 from explainaboard_client import ExplainaboardClient
-from explainaboard_client.utils import sanitize_for_json
+from explainaboard_client.exceptions import APIVersionMismatchException
+from explainaboard_client.utils import (
+    prompt_for_auto_upgrade_and_exit,
+    sanitize_for_json,
+)
 
 
 def main():
@@ -168,7 +172,8 @@ def main():
                     system["created_at"],
                 ] + metric_strs
                 print("\t".join(system_data))
-
+    except APIVersionMismatchException as e:
+        prompt_for_auto_upgrade_and_exit(e)
     except Exception:
         traceback.print_exc()
         print("failed to query systems")

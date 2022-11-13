@@ -1,17 +1,24 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 import json
 import logging
 from multiprocessing.pool import ApplyResult
+import re
 from typing import Literal, Union
 
+from explainaboard_api_client import __name__ as api_client_name
+from explainaboard_api_client import __version__ as api_client_version
 from explainaboard_api_client import ApiClient, Configuration
 from explainaboard_api_client.api.default_api import DefaultApi
+from explainaboard_api_client.api_client import Endpoint
+from explainaboard_api_client.exceptions import ApiException
 from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.systems_return import SystemsReturn
 from explainaboard_api_client.models import System, SystemCreateProps, SystemOutputProps
 import explainaboard_client
 from explainaboard_client.config import get_host
+from explainaboard_client.exceptions import APIVersionMismatchException
 from explainaboard_client.tasks import DEFAULT_METRICS, infer_file_type, TaskType
 from explainaboard_client.utils import (
     encode_file_to_base64,
@@ -34,6 +41,58 @@ class ExplainaboardClient:
         )
         self._default_api: DefaultApi = DefaultApi(api_client)
         self._active: bool = True
+
+        self._api_version_param = "x_api_version"
+        self._api_version_header = "X-API-version"
+        self._api_client_version = api_client_version
+
+        def with_check_api_version(func: Callable) -> Callable:
+            def wrapper(*args, **kwargs):
+                try:
+                    return func(*args, **kwargs, x_api_version=self._api_client_version)
+                except ApiException as e:
+                    body = json.loads(e.body)
+                    if body["error_code"] == 40001:
+                        detail = body["detail"]
+                        package = api_client_name.replace("_", "-")
+                        match = re.search("(\\d+\\.\\d+.\\d+)", detail)
+                        if match:
+                            required_version = detail[match.start() : match.end()]
+                            message = (
+                                f"{detail} "
+                                + "Installation command: "
+                                + f"pip install {package}=={required_version}"
+                            )
+                            raise APIVersionMismatchException(
+                                message,
+                                package,
+                                required_version,
+                                self._api_client_version,
+                            ) from e
+                        else:
+                            raise RuntimeError(
+                                "Unable to parse required API version from message: "
+                                f"{detail}. Please contact admin."
+                            ) from e
+                    else:
+                        raise e
+
+            return wrapper
+
+        # The code below does two things:
+        # 1. modifies the api client's validation rule of every endpoint
+        # to allow us to specify the X-API-version header in every request
+        # without having to define it in openapi.yaml
+        # 2. decorates the call_with_http_info of every endpoint
+        # so the api version header is attached in every request.
+        for v in vars(self._default_api).values():
+            if type(v) == Endpoint:
+                v.params_map["all"].append(self._api_version_param)
+                v.openapi_types[self._api_version_param] = (str,)
+                v.attribute_map[self._api_version_param] = self._api_version_header
+                v.location_map[self._api_version_param] = "header"
+
+                v.call_with_http_info = with_check_api_version(v.call_with_http_info)
 
     def close(self):
         self._default_api.api_client.close()

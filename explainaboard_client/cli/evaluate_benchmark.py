@@ -9,7 +9,11 @@ from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.system_output_props import SystemOutputProps
 import explainaboard_client
 from explainaboard_client import ExplainaboardClient
-from explainaboard_client.utils import generate_dataset_id
+from explainaboard_client.exceptions import APIVersionMismatchException
+from explainaboard_client.utils import (
+    generate_dataset_id,
+    prompt_for_auto_upgrade_and_exit,
+)
 
 
 def validate_outputs(system_outputs):
@@ -147,6 +151,8 @@ def main():
             sys_id = result.system_id
             client.get_system(sys_id)
             print(f"evaluated system {args.system_name} with ID {sys_id}")
+        except APIVersionMismatchException as e:
+            prompt_for_auto_upgrade_and_exit(e)
         except Exception:
             print(f"failed to evaluate system {args.system_name}")
 
