@@ -9,10 +9,10 @@ from unittest.mock import patch
 
 import explainaboard_client
 from explainaboard_client.cli import delete_systems, evaluate_system
-from explainaboard_client.tests.test_utils import test_artifacts_path, TestEndpointsE2E
+from explainaboard_client.tests.test_utils import test_artifacts_path, TestEndpointsE2EWithSystemDeletion
 
 
-class TestCLI(TestEndpointsE2E):
+class TestCLI(TestEndpointsE2EWithSystemDeletion):
     _SYSTEM_OUTPUT = os.path.join(test_artifacts_path, "sst2-lstm-output.txt")
     _DATASET = os.path.join(test_artifacts_path, "sst2-dataset.tsv")
 
@@ -58,6 +58,7 @@ class TestCLI(TestEndpointsE2E):
             )
             self.assertIsNotNone(m, msg=f"evaluation failed:\n{stdout_content=}")
             sys_id = m.group(1)
+            self._system_ids_to_delete.append(sys_id)
             # Check that report was written properly and can be loaded
             self.assertTrue(report_file.exists(), msg="report file not found")
             json.loads(report_file.read_text())
