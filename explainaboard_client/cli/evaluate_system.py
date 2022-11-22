@@ -107,6 +107,13 @@ def main():
         "--shared-users", type=str, nargs="+", help="Emails of users to share with"
     )
     parser.add_argument(
+        "--system-tags",
+        type=str,
+        nargs="+",
+        help="User defined tags for the system,"
+        + "useful for searching and grouping systems",
+    )
+    parser.add_argument(
         "--report-file",
         type=str,
         help="A path to a file where the JSON report will be written",
@@ -138,6 +145,7 @@ def main():
             system_details_file=args.system_details_file,
             public=args.public,
             shared_users=args.shared_users,
+            system_tags=args.system_tags,
         )
         frontend = get_frontend(explainaboard_client.environment)
         sys_id = evaluation_data["system_id"]

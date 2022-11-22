@@ -69,6 +69,13 @@ def main():
         nargs="+",
         help="Emails of users with which the system is shared",
     )
+    parser.add_argument(
+        "--system-tags",
+        type=str,
+        nargs="+",
+        help="User defined tags for the system,"
+        + "useful for searching and grouping systems",
+    )
     # ---- Display settings
     parser.add_argument(
         "--output-format",
@@ -120,6 +127,7 @@ def main():
             split=args.split,
             creator=args.creator,
             shared_users=args.shared_users,
+            system_tags=args.system_tags,
             page=args.page,
             page_size=args.page_size,
             sort_field=args.sort_field,
