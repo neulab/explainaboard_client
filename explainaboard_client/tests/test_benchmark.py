@@ -1,5 +1,6 @@
 import json
 import os
+import platform
 from typing import Final
 
 from explainaboard_client.tests.test_utils import TestEndpointsE2E
@@ -9,7 +10,9 @@ class TestBenchmark(TestEndpointsE2E):
     _BENCHMARK_JSON: Final = os.path.join(
         os.path.dirname(__file__), "../../example/benchmark/gaokao/config_gaokao.json"
     )
-    _BENCHMARK_ID: Final = "gaokao_test_cli"
+    # append the Python version to prevent DB from throwing duplicate id errors
+    # in CI as tests for different Python versions are run concurrently
+    _BENCHMARK_ID: Final = f"gaokao_test_cli_py{platform.version()}"
     _BENCHMARK_NEW_NAME: Final = "gaokao_new_name"
 
     def test_upload_benchmark(self):
