@@ -15,7 +15,19 @@ from explainaboard_api_client.api_client import Endpoint
 from explainaboard_api_client.exceptions import ApiException
 from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.systems_return import SystemsReturn
-from explainaboard_api_client.models import System, SystemCreateProps, SystemOutputProps
+from explainaboard_api_client.models import (
+    BenchmarkConfig,
+    BenchmarkCreateProps,
+    BenchmarkDatasetConfig,
+    BenchmarkMetric,
+    BenchmarkOperationConfig,
+    BenchmarkUpdateProps,
+    BenchmarkViewConfig,
+    Paper,
+    System,
+    SystemCreateProps,
+    SystemOutputProps,
+)
 import explainaboard_client
 from explainaboard_client.config import get_host
 from explainaboard_client.exceptions import APIVersionMismatchException
@@ -378,6 +390,83 @@ class ExplainaboardClient:
         )
         result_list = [x.to_dict() for x in result.systems]
         return result_list
+
+    def _benchmark_view_config_from_dict(self, view: dict) -> BenchmarkViewConfig:
+        operations = view.get("operations", None)
+        if operations is not None:
+            operations = [
+                BenchmarkOperationConfig(**operation) for operation in operations
+            ]
+        view.pop("operations", None)
+        return BenchmarkViewConfig(operations=operations, **view)
+
+    def _benchmark_dataset_from_dict(self, dataset: dict) -> BenchmarkDatasetConfig:
+        metrics = dataset.get("metrics", None)
+        if metrics is not None:
+            metrics = [BenchmarkMetric(**metric) for metric in metrics]
+        dataset.pop("metrics", None)
+        return BenchmarkDatasetConfig(metrics=metrics, **dataset)
+
+    def _benchmark_props_from_dict(
+        self, benchmark: dict, create: bool
+    ) -> BenchmarkCreateProps | BenchmarkUpdateProps:
+        # views, paper, metrics, and datasets have their own
+        # type classes which we need to explicitly construct
+        # to pass the API type validation
+        views = benchmark.get("views", None)
+        if views is not None:
+            views = [self._benchmark_view_config_from_dict(view) for view in views]
+        benchmark.pop("views", None)
+
+        paper = benchmark.get("paper", None)
+        if paper is not None:
+            paper = Paper(**paper)
+        benchmark.pop("paper", None)
+
+        metrics = benchmark.get("metrics", None)
+        if metrics is not None:
+            metrics = [BenchmarkMetric(**metric) for metric in metrics]
+        benchmark.pop("metrics", None)
+
+        datasets = benchmark.get("datasets", None)
+        if datasets is not None:
+            datasets = [
+                self._benchmark_dataset_from_dict(dataset) for dataset in datasets
+            ]
+        benchmark.pop("datasets", None)
+
+        Props = BenchmarkCreateProps if create else BenchmarkUpdateProps
+        return Props(
+            views=views, paper=paper, metrics=metrics, datasets=datasets, **benchmark
+        )
+
+    def upload_benchmark(self, benchmark: dict):
+        """Upload a benchmark.
+
+        Args:
+            benchmark: A dictionary. TODO(chihhao) detailed schema
+
+        """
+        props = self._benchmark_props_from_dict(benchmark, create=True)
+        result: BenchmarkConfig = self._default_api.benchmark_post(props)
+        return result.to_dict()
+
+    def update_benchmark(self, benchmark_id: str, new_values: dict) -> None:
+        """Update a single benchmark
+        Args:
+            benchmark_id: The benchmark ID.
+            new_values: New values of the benchmark. TODO(chihhao) detailed schema
+        """
+        props = self._benchmark_props_from_dict(new_values, create=False)
+        self._default_api.benchmark_update_by_id(benchmark_id, props)
+
+    def delete_benchmark(self, benchmark_id: str) -> None:
+        """Delete a single benchmark.
+
+        Args:
+            benchmark_id: The benchmark ID.
+        """
+        self._default_api.benchmark_delete_by_id(benchmark_id)
 
     # --- Pass-through API calls that will be deprecated
     def systems_post(
