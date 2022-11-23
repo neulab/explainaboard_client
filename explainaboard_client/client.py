@@ -15,7 +15,20 @@ from explainaboard_api_client.api_client import Endpoint
 from explainaboard_api_client.exceptions import ApiException
 from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.systems_return import SystemsReturn
-from explainaboard_api_client.models import System, SystemCreateProps, SystemOutputProps
+from explainaboard_api_client.models import (
+    Benchmark,
+    BenchmarkConfig,
+    BenchmarkCreateProps,
+    BenchmarkDatasetConfig,
+    BenchmarkMetric,
+    BenchmarkOperationConfig,
+    BenchmarkUpdateProps,
+    BenchmarkViewConfig,
+    Paper,
+    System,
+    SystemCreateProps,
+    SystemOutputProps,
+)
 import explainaboard_client
 from explainaboard_client.config import get_host
 from explainaboard_client.exceptions import APIVersionMismatchException
@@ -378,6 +391,93 @@ class ExplainaboardClient:
         )
         result_list = [x.to_dict() for x in result.systems]
         return result_list
+
+    def _benchmark_view_config_from_dict(self, view: dict) -> BenchmarkViewConfig:
+        operations = view.get("operations", None)
+        if operations is not None:
+            operations = [
+                BenchmarkOperationConfig(**operation) for operation in operations
+            ]
+        view.pop("operations", None)
+        return BenchmarkViewConfig(operations=operations, **view)
+
+    def _benchmark_dataset_from_dict(self, dataset: dict) -> BenchmarkDatasetConfig:
+        metrics = dataset.get("metrics", None)
+        if metrics is not None:
+            metrics = [BenchmarkMetric(**metric) for metric in metrics]
+        dataset.pop("metrics", None)
+        return BenchmarkDatasetConfig(metrics=metrics, **dataset)
+
+    def _benchmark_props_from_dict(
+        self, benchmark: dict, create: bool
+    ) -> BenchmarkCreateProps | BenchmarkUpdateProps:
+        # views, paper, metrics, and datasets have their own
+        # class types which we must explicitly construct
+        # to pass type validation
+        if "views" in benchmark:
+            benchmark["views"] = [
+                self._benchmark_view_config_from_dict(view)
+                for view in benchmark["views"]
+            ]
+
+        if "paper" in benchmark:
+            benchmark["paper"] = Paper(**benchmark["paper"])
+
+        if "metrics" in benchmark:
+            benchmark["metrics"] = [
+                BenchmarkMetric(**metric) for metric in benchmark["metrics"]
+            ]
+
+        if "datasets" in benchmark:
+            benchmark["datasets"] = [
+                self._benchmark_dataset_from_dict(dataset)
+                for dataset in benchmark["datasets"]
+            ]
+
+        Props = BenchmarkCreateProps if create else BenchmarkUpdateProps
+        return Props(**benchmark)
+
+    def get_benchmark(self, benchmark_id: str, by_creator: bool) -> dict:
+        """Get a single benchmark by the system ID.
+
+        Args:
+            benchmark_id: The benchmark ID.
+
+        Returns:
+            A dictionary of information about the benchmark.
+        """
+        result: Benchmark = self._default_api.benchmark_get_by_id(
+            benchmark_id, by_creator
+        )
+        return result.to_dict()
+
+    def upload_benchmark(self, benchmark: dict):
+        """Upload a benchmark.
+
+        Args:
+            benchmark: A dictionary. TODO(chihhao) detailed schema
+
+        """
+        props = self._benchmark_props_from_dict(benchmark, create=True)
+        result: BenchmarkConfig = self._default_api.benchmark_post(props)
+        return result.to_dict()
+
+    def update_benchmark(self, benchmark_id: str, new_values: dict) -> None:
+        """Update a single benchmark
+        Args:
+            benchmark_id: The benchmark ID.
+            new_values: New values of the benchmark. TODO(chihhao) detailed schema
+        """
+        props = self._benchmark_props_from_dict(new_values, create=False)
+        self._default_api.benchmark_update_by_id(benchmark_id, props)
+
+    def delete_benchmark(self, benchmark_id: str) -> None:
+        """Delete a single benchmark.
+
+        Args:
+            benchmark_id: The benchmark ID.
+        """
+        self._default_api.benchmark_delete_by_id(benchmark_id)
 
     # --- Pass-through API calls that will be deprecated
     def systems_post(
