@@ -16,6 +16,7 @@ from explainaboard_api_client.exceptions import ApiException
 from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.systems_return import SystemsReturn
 from explainaboard_api_client.models import (
+    Benchmark,
     BenchmarkConfig,
     BenchmarkCreateProps,
     BenchmarkDatasetConfig,
@@ -411,34 +412,44 @@ class ExplainaboardClient:
         self, benchmark: dict, create: bool
     ) -> BenchmarkCreateProps | BenchmarkUpdateProps:
         # views, paper, metrics, and datasets have their own
-        # type classes which we need to explicitly construct
-        # to pass the API type validation
-        views = benchmark.get("views", None)
-        if views is not None:
-            views = [self._benchmark_view_config_from_dict(view) for view in views]
-        benchmark.pop("views", None)
-
-        paper = benchmark.get("paper", None)
-        if paper is not None:
-            paper = Paper(**paper)
-        benchmark.pop("paper", None)
-
-        metrics = benchmark.get("metrics", None)
-        if metrics is not None:
-            metrics = [BenchmarkMetric(**metric) for metric in metrics]
-        benchmark.pop("metrics", None)
-
-        datasets = benchmark.get("datasets", None)
-        if datasets is not None:
-            datasets = [
-                self._benchmark_dataset_from_dict(dataset) for dataset in datasets
+        # class types which we must explicitly construct
+        # to pass type validation
+        if "views" in benchmark:
+            benchmark["views"] = [
+                self._benchmark_view_config_from_dict(view)
+                for view in benchmark["views"]
             ]
-        benchmark.pop("datasets", None)
+
+        if "paper" in benchmark:
+            benchmark["paper"] = Paper(**benchmark["paper"])
+
+        if "metrics" in benchmark:
+            benchmark["metrics"] = [
+                BenchmarkMetric(**metric) for metric in benchmark["metrics"]
+            ]
+
+        if "datasets" in benchmark:
+            benchmark["datasets"] = [
+                self._benchmark_dataset_from_dict(dataset)
+                for dataset in benchmark["datasets"]
+            ]
 
         Props = BenchmarkCreateProps if create else BenchmarkUpdateProps
-        return Props(
-            views=views, paper=paper, metrics=metrics, datasets=datasets, **benchmark
+        return Props(**benchmark)
+
+    def get_benchmark(self, benchmark_id: str, by_creator: bool) -> dict:
+        """Get a single benchmark by the system ID.
+
+        Args:
+            benchmark_id: The benchmark ID.
+
+        Returns:
+            A dictionary of information about the benchmark.
+        """
+        result: Benchmark = self._default_api.benchmark_get_by_id(
+            benchmark_id, by_creator
         )
+        return result.to_dict()
 
     def upload_benchmark(self, benchmark: dict):
         """Upload a benchmark.
