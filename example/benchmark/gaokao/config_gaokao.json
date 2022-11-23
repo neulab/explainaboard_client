@@ -1,7 +1,17 @@
 {
-    "name": "Gaokao",
-    "description":"Gaokao Benchmark",
-    "logo":"https://explainaboard.s3.amazonaws.com/benchmarks/figures/gaokao.jpg",
+    "id": "gaokao_example",
+    "name": "Gaokao example",
+    "is_private": false,
+    "shared_users": ["explainaboard@gmail.com"],
+    "contact":"explainaboard@gmail.com",
+    "homepage":"https://github.com/gaokao",
+    "paper":{
+      "title":"Gaokao Benchmark",
+      "url":"www.xxx.com"
+    },
+    "description":"Gaokao is a benchmark that can track how well we make progress towards human-level AI.",
+    "parent": "",
+    "logo":"https://explainaboard.s3.amazonaws.com/benchmarks/figures/gaokao2022.png",
     "datasets": [
       {
         "dataset_name": "gaokao2018_np1",
@@ -577,35 +587,37 @@
         {
             "name": "Overall with Essay",
             "operations": [
-                {"op": "weighted_sum", "weight": "sub_dataset", "weight_map": {
+                {"op": "weighted_sum", "group_by": ["dataset_name"], "weight": "sub_dataset", "weight_map": {
                     "listening":  1.5,
-                     "cloze-multiple-choice": 1.5,
-                     "cloze-hint":1.5,
-                     "reading-multiple-choice":2,
-                     "reading-cloze":2,
-                     "writing-grammar":1,
-                     "writing-essay":1
-                     }}
+                    "cloze-multiple-choice": 1.5,
+                    "cloze-hint":1.5,
+                    "reading-multiple-choice":2,
+                    "reading-cloze":2,
+                    "writing-grammar":1,
+                    "writing-essay":1
+                    }},
+                  {"op": "mean"}
             ]
         },
         {
           "name": "Overall without Essay",
           "operations": [
-              {"op": "weighted_sum", "weight": "sub_dataset", "weight_map": {
-                  "listening":  1.5,
-                  "cloze-multiple-choice": 1.5,
-                  "cloze-hint":1.5,
-                  "reading-multiple-choice":2,
-                  "reading-cloze":2,
-                  "writing-grammar":1,
-                   "writing-essay":0
-                   }}
-          ]
+            {"op": "weighted_sum", "group_by": ["dataset_name"], "weight": "sub_dataset", "weight_map": {
+                "listening":  1.5,
+                "cloze-multiple-choice": 1.5,
+                "cloze-hint":1.5,
+                "reading-multiple-choice":2,
+                "reading-cloze":2,
+                "writing-grammar":1,
+                "writing-essay":0
+                }},
+              {"op": "mean"}
+        ]
       },
         {
             "name": "Question Type (with Essay)",
             "operations": [
-                {"op": "mean", "group_by": "sub_dataset"},
+                {"op": "mean", "group_by": ["sub_dataset"]},
                 {"op": "multiply", "weight": "sub_dataset", "weight_map": {
                     "listening":  1.5,
                     "cloze-multiple-choice": 1.5,
@@ -613,14 +625,14 @@
                     "reading-multiple-choice":2,
                     "reading-cloze":2,
                     "writing-grammar":1,
-                     "writing-essay":1
-                     }}
+                    "writing-essay":1
+                    }}
             ]
         },
         {
           "name": "Question Type (without Essay)",
           "operations": [
-              {"op": "mean", "group_by": "sub_dataset"},
+              {"op": "mean", "group_by": ["sub_dataset"]},
               {"op": "multiply", "weight": "sub_dataset", "weight_map": {
                   "listening":  1.5,
                   "cloze-multiple-choice": 1.5,
@@ -628,10 +640,10 @@
                   "reading-multiple-choice":2,
                   "reading-cloze":2,
                   "writing-grammar":1,
-                   "writing-essay":0
-                   }}
+                  "writing-essay":0
+                  }}
           ]
       }
     ],
-    "default_views": ["Overall"]
+    "default_views": ["Overall with Essay", "Overall without Essay"]
 }
