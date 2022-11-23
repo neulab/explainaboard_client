@@ -12,7 +12,7 @@ class TestBenchmark(TestEndpointsE2E):
     )
     # append the Python version to prevent DB from throwing duplicate id errors
     # in CI as tests for different Python versions are run concurrently
-    _BENCHMARK_ID: Final = f"gaokao_test_cli_py{platform.version()}"
+    _BENCHMARK_ID: Final = f"gaokao_test_cli_py{platform.python_version()}"
     _BENCHMARK_NEW_NAME: Final = "gaokao_new_name"
 
     def test_upload_benchmark(self):
