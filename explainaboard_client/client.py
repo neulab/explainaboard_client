@@ -120,6 +120,7 @@ class ExplainaboardClient:
         system_details: dict | None = None,
         public: bool = False,
         shared_users: list[str] | None = None,
+        system_tags: list[str] | None = None,
     ) -> dict:
         """Evaluate a system output file and return a dictionary of results.
 
@@ -137,6 +138,8 @@ class ExplainaboardClient:
             system_details: File of system details in JSON format.
             public: Make the evaluation results public.
             shared_users: Emails of users to share with.
+            system_tags: User defined tags for the system,
+                useful for searching and grouping systems
         """
         # Sanity checks
         if not (source_language or target_language):
@@ -152,6 +155,7 @@ class ExplainaboardClient:
         source_language = source_language or target_language
         target_language = target_language or source_language
         shared_users = shared_users or []
+        system_tags = system_tags or []
 
         # Do the actual upload
         metadata = SystemMetadata(
@@ -163,6 +167,7 @@ class ExplainaboardClient:
             target_language=target_language,
             dataset_split=split,
             shared_users=shared_users,
+            system_tags=system_tags,
             system_details=system_details,
         )
         if dataset is not None:
@@ -210,6 +215,7 @@ class ExplainaboardClient:
         system_details_file: str | None = None,
         public: bool = False,
         shared_users: list[str] | None = None,
+        system_tags: list[str] | None = None,
     ) -> dict:
         """Evaluate a system output file and return a dictionary of results.
 
@@ -231,6 +237,8 @@ class ExplainaboardClient:
             system_details_file: File of system details in JSON format.
             public: Make the evaluation results public.
             shared_users: Emails of users to share with.
+            system_tags: User defined tags for the system,
+                useful for searching and grouping systems
         """
         # Sanity checks
         if not (source_language or target_language):
@@ -248,6 +256,7 @@ class ExplainaboardClient:
             custom_dataset_file_type, task
         )
         shared_users = shared_users or []
+        system_tags = system_tags or []
 
         # Read system details file
         system_details: dict = {}
@@ -266,6 +275,7 @@ class ExplainaboardClient:
             dataset_split=split,
             shared_users=shared_users,
             system_details=system_details,
+            system_tags=system_tags,
         )
         if dataset is not None:
             metadata.dataset_metadata_id = generate_dataset_id(dataset, sub_dataset)
@@ -324,6 +334,7 @@ class ExplainaboardClient:
         split: str | None = None,
         creator: str | None = None,
         shared_users: list[str] | None = None,
+        system_tags: list[str] | None = None,
         page: int = 0,
         page_size: int = 20,
         sort_field: str = "created_at",
@@ -339,6 +350,8 @@ class ExplainaboardClient:
             split: Dataset split.
             creator: Email of the creator of the system.
             shared_users: Emails of users with which the system is shared.
+            system_tags: User defined tags for the system,
+                useful for searching and grouping systems
             page: Which page to retrieve.
             page_size: The number of items on each page. Set to 0 for all.
             sort_field: Which field to sort by. Supports `created_at` and metric names
@@ -357,6 +370,7 @@ class ExplainaboardClient:
             split=split or "",
             creator=creator or "",
             shared_users=shared_users or [],
+            system_tags=system_tags or [],
             page=page,
             page_size=page_size,
             sort_field=sort_field,

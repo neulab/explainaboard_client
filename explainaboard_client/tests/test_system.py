@@ -20,6 +20,7 @@ class TestSystem(TestEndpointsE2E):
             dataset="sst2",
             split="test",
             shared_users=["explainaboard@gmail.com"],
+            system_tags=["test_cli"],
         )
         sys_id = result["system_id"]
         try:
@@ -42,6 +43,7 @@ class TestSystem(TestEndpointsE2E):
             target_language="en",
             split="test",  # TODO(gneubig): required, but probably shouldn't be
             shared_users=["explainaboard@gmail.com"],
+            system_tags=["test_cli"],
         )
         # cleanup
         sys_id = result["system_id"]
@@ -61,6 +63,7 @@ class TestSystem(TestEndpointsE2E):
             split="test",
             system_details={"test": "test"},
             shared_users=["explainaboard@gmail.com"],
+            system_tags=["test_cli"],
         )
         sys_id = result["system_id"]
         try:
@@ -89,6 +92,7 @@ class TestSystem(TestEndpointsE2E):
             split="test",  # TODO(gneubig): required, but probably shouldn't be
             system_details={"test": "test"},
             shared_users=["explainaboard@gmail.com"],
+            system_tags=["test_cli"],
         )
         sys_id = result["system_id"]
         try:
@@ -111,13 +115,26 @@ class TestSystem(TestEndpointsE2E):
                 dataset="sst2",
                 split="test",
                 shared_users=["explainaboard@gmail.com"],
+                system_tags=["test_cli"],
             )
             system_ids.append(result["system_id"])
+
+        # test find by system_name
         all_systems = self._client.find_systems(system_name="test_cli")
         self.assertGreater(len(all_systems), 1)
         unique_names = {x["system_name"]: 0 for x in all_systems}
         self.assertIn("test_cli0", unique_names)
         self.assertIn("test_cli1", unique_names)
+
+        # test find by system_tag
+        all_systems = self._client.find_systems(
+            system_name="", system_tags=["test_cli"]
+        )
+        self.assertGreater(len(all_systems), 1)
+        unique_names = {x["system_name"]: 0 for x in all_systems}
+        self.assertIn("test_cli0", unique_names)
+        self.assertIn("test_cli1", unique_names)
+
         for x in system_ids:
             try:
                 self._client.delete_system(x)

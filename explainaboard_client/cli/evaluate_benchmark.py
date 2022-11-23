@@ -67,6 +67,13 @@ def main():
     parser.add_argument(
         "--shared-users", type=str, nargs="+", help="Emails of users to share with"
     )
+    parser.add_argument(
+        "--system-tags",
+        type=str,
+        nargs="+",
+        help="User defined tags for the system,"
+        + "useful for searching and grouping systems",
+    )
     args = parser.parse_args()
 
     benchmark = args.benchmark
@@ -85,6 +92,7 @@ def main():
         raise ValueError("System output file names should start with number")
 
     shared_users = args.shared_users or []
+    system_tags = args.system_tags or []
     # Read system details file
     system_details = {}
     if args.system_details:
@@ -131,6 +139,7 @@ def main():
             dataset_split=dataset_split,
             shared_users=shared_users,
             system_details=system_details,
+            system_tags=system_tags,
         )
 
         create_props = SystemCreateProps(
