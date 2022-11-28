@@ -6,6 +6,7 @@ import logging
 from multiprocessing.pool import ApplyResult
 import re
 from typing import Literal, Union
+import pandas as pd
 
 from explainaboard_api_client import __name__ as api_client_name
 from explainaboard_api_client import __version__ as api_client_version
@@ -32,7 +33,7 @@ from explainaboard_api_client.models import (
 import explainaboard_client
 from explainaboard_client.config import get_host
 from explainaboard_client.exceptions import APIVersionMismatchException
-from explainaboard_client.tasks import DEFAULT_METRICS, infer_file_type, TaskType
+from explainaboard_client.tasks import CUSTOM_DATASET_REQUIRED_COLUMNS, DEFAULT_METRICS, SYSTEM_OUTPUT_REQUIRED_COLUMNS, infer_file_type, TaskType
 from explainaboard_client.utils import (
     encode_file_to_base64,
     encode_string_to_base64,
@@ -478,6 +479,64 @@ class ExplainaboardClient:
             benchmark_id: The benchmark ID.
         """
         self._default_api.benchmark_delete_by_id(benchmark_id)
+
+    def _verify_column_names_for_dataset(self, columns:list[str], task:str):
+        task = TaskType(task)
+        if task not in CUSTOM_DATASET_REQUIRED_COLUMNS:
+            raise ValueError(
+                f"{task} is currently not supported for custom dataset evaluation or not supported by ExplainaBoard."
+            )
+
+        columns = set(columns)
+        required_columns = CUSTOM_DATASET_REQUIRED_COLUMNS[task]
+        for col in required_columns:
+            if col not in columns:
+                raise ValueError(
+                    f"Column \"{col}\" is missing from the given columns({columns}). For task \"{task}\", the requred columns are: {required_columns}. "
+                )
+    
+    def _verify_column_names_for_output(self, columns:list[str], task:str):
+        task = TaskType(task)
+        if task not in SYSTEM_OUTPUT_REQUIRED_COLUMNS:
+            raise ValueError(
+                f"{task} is currently not supported by ExplainaBoard."
+            )
+
+        columns = set(columns)
+        required_columns = SYSTEM_OUTPUT_REQUIRED_COLUMNS[task]
+        for col in required_columns:
+            if col not in columns:
+                raise ValueError(
+                    f"Column \"{col}\" is missing from the given columns({columns}). For task \"{task}\", the requred columns for prediction are: {required_columns}. "
+                )
+
+    def wrap_tabular_dataset(self, dataset: pd.DataFrame, task: str, columns_to_analyze: list[str] = None) -> list[dict]:
+        if not columns_to_analyze:
+            columns_to_analyze = list(dataset.iloc[0].keys())
+        
+        self._verify_column_names_for_dataset(columns_to_analyze, task)
+
+        wrapped_dataset = []
+        for _, row in dataset.iterrows():
+            new_row = {}
+            for col in columns_to_analyze:
+                new_row[col] = row[col]
+            wrapped_dataset.append(new_row)
+        return wrapped_dataset
+    
+    def wrap_tabular_output(self, output: pd.DataFrame, task: str, columns_to_analyze: list[str] = None) -> list[dict]:
+        if not columns_to_analyze:
+            columns_to_analyze = list(output.iloc[0].keys())
+        
+        self._verify_column_names_for_output(columns_to_analyze, task)
+
+        wrapped_output = []
+        for _, row in output.iterrows():
+            new_row = {}
+            for col in columns_to_analyze:
+                new_row[col] = row[col]
+            wrapped_output.append(new_row)
+        return wrapped_output
 
     # --- Pass-through API calls that will be deprecated
     def systems_post(

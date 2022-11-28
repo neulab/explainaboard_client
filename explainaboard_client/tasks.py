@@ -84,6 +84,53 @@ DEFAULT_METRICS: dict[TaskType, list[str]] = {
 
 FILE_SUFFIX_MAP = {"txt": "text"}
 
+CUSTOM_DATASET_REQUIRED_COLUMNS: dict[TaskType, list[str]] = {
+    TaskType.text_classification: ["text", "true_label"],
+    TaskType.qa_extractive: ["context", "question", "answers"],
+    TaskType.summarization: ["source", "reference"],
+    TaskType.machine_translation: ["source", "reference"],
+    TaskType.text_pair_classification: ["text1", "text2", "true_label"],
+    TaskType.aspect_based_sentiment_classification: ["aspect", "text", "true_label"],
+    TaskType.kg_link_tail_prediction: [
+        "true_head",
+        "true_head_decipher",
+        "true_link",
+        "true_tail",
+        "true_tail_decipher",
+    ],
+    TaskType.qa_multiple_choice: ["context", "options", "question", "answers"],
+    TaskType.qa_open_domain: ["question", "answers"],
+    TaskType.conditional_generation: ["source", "reference"],
+    TaskType.language_modeling: ["text"],
+    TaskType.cloze_mutiple_choice: ["context", "options", "question_mark", "answers"],
+    TaskType.cloze_generative: ["context", "hint", "question_mark", "answers"],
+    TaskType.grammatical_error_correction: ["text", "edits"],
+    TaskType.tabular_regression: ["true_value"],
+    TaskType.tabular_classification: ["true_label"],
+}
+
+SYSTEM_OUTPUT_REQUIRED_COLUMNS: dict[TaskType, list[str]] = {
+    TaskType.text_classification: ["predicted_label"],
+    TaskType.qa_extractive: ["predicted_answers"],
+    TaskType.summarization: ["hypothesis"],
+    TaskType.machine_translation: ["hypothesis"],
+    TaskType.text_pair_classification: ["predicted_label"],
+    TaskType.aspect_based_sentiment_classification: ["predicted_label"],
+    TaskType.kg_link_tail_prediction: ["predict", "predictions", "true_rank"],
+    TaskType.qa_multiple_choice: ["predicted_answers"],
+    TaskType.qa_open_domain: ["predicted_answer"],
+    TaskType.qa_tat: ["predicted_answer", "predicted_answer_scale"],
+    TaskType.conditional_generation: ["hypothesis"],
+    TaskType.language_modeling: ["log_probs"],
+    TaskType.cloze_mutiple_choice: ["predicted_answers"],
+    TaskType.cloze_generative: ["predicted_answers"],
+    TaskType.grammatical_error_correction: ["predicted_edits"],
+    TaskType.nlg_meta_evaluation: ["auto_scores"],
+    TaskType.tabular_regression: ["predicted_value"],
+    TaskType.tabular_classification: ["predicted_label"],
+    TaskType.argument_pair_extraction: ["pred_tags"],
+}
+
 
 def infer_file_type(file_path: str | None, task: TaskType):
     """
