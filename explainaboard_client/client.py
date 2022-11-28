@@ -46,6 +46,7 @@ from explainaboard_client.utils import (
 )
 import pandas as pd
 
+
 class ExplainaboardClient:
     # ---- Initializers, etc.
     def __init__(self) -> None:
@@ -485,40 +486,45 @@ class ExplainaboardClient:
         """
         self._default_api.benchmark_delete_by_id(benchmark_id)
 
-    def _verify_column_names_for_dataset(self, columns:list[str], task:str):
+    def _verify_column_names_for_dataset(self, columns: list[str], task: str):
         task = TaskType(task)
         if task not in CUSTOM_DATASET_REQUIRED_COLUMNS:
             raise ValueError(
-                f"{task} is currently not supported for custom dataset evaluation or not supported by ExplainaBoard."
+                f"{task} is currently not supported for custom dataset "
+                "evaluation or not supported by ExplainaBoard."
             )
 
-        columns = set(columns)
+        columns_set = set(columns)
         required_columns = CUSTOM_DATASET_REQUIRED_COLUMNS[task]
         for col in required_columns:
-            if col not in columns:
+            if col not in columns_set:
                 raise ValueError(
-                    f"Column \"{col}\" is missing from the given columns({columns}). For task \"{task}\", the requred columns are: {required_columns}. "
+                    f'Column "{col}" is missing from the given columns '
+                    '({columns}). For task "{task}", the requred columns '
+                    "are: {required_columns}. "
                 )
-    
-    def _verify_column_names_for_output(self, columns:list[str], task:str):
+
+    def _verify_column_names_for_output(self, columns: list[str], task: str):
         task = TaskType(task)
         if task not in SYSTEM_OUTPUT_REQUIRED_COLUMNS:
-            raise ValueError(
-                f"{task} is currently not supported by ExplainaBoard."
-            )
+            raise ValueError(f"{task} is currently not supported by ExplainaBoard.")
 
-        columns = set(columns)
+        columns_set = set(columns)
         required_columns = SYSTEM_OUTPUT_REQUIRED_COLUMNS[task]
         for col in required_columns:
-            if col not in columns:
+            if col not in columns_set:
                 raise ValueError(
-                    f"Column \"{col}\" is missing from the given columns({columns}). For task \"{task}\", the requred columns for prediction are: {required_columns}. "
+                    f'Column "{col}" is missing from the given columns '
+                    '({columns}). For task "{task}", the requred columns '
+                    "for prediction are: {required_columns}. "
                 )
 
-    def wrap_tabular_dataset(self, dataset: pd.DataFrame, task: str, columns_to_analyze: list[str] = None) -> list[dict]:
+    def wrap_tabular_dataset(
+        self, dataset: pd.DataFrame, task: str, columns_to_analyze: list[str] = None
+    ) -> list[dict]:
         if not columns_to_analyze:
             columns_to_analyze = list(dataset.iloc[0].keys())
-        
+
         self._verify_column_names_for_dataset(columns_to_analyze, task)
 
         wrapped_dataset = []
@@ -528,11 +534,13 @@ class ExplainaboardClient:
                 new_row[col] = row[col]
             wrapped_dataset.append(new_row)
         return wrapped_dataset
-    
-    def wrap_tabular_output(self, output: pd.DataFrame, task: str, columns_to_analyze: list[str] = None) -> list[dict]:
+
+    def wrap_tabular_output(
+        self, output: pd.DataFrame, task: str, columns_to_analyze: list[str] = None
+    ) -> list[dict]:
         if not columns_to_analyze:
             columns_to_analyze = list(output.iloc[0].keys())
-        
+
         self._verify_column_names_for_output(columns_to_analyze, task)
 
         wrapped_output = []
