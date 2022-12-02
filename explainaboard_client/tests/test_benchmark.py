@@ -45,6 +45,10 @@ class TestBenchmark(TestEndpointsE2E):
             # check all old values match
             del result["config"]["name"]
             del new_result["config"]["name"]
+            # the "Benchmark" schema contains a "time" field
+            # that is updated on every GET request
+            del result["time"]
+            del new_result["time"]
             self.assertDictEqual(result, new_result)
 
         finally:
