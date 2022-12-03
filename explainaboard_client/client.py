@@ -92,20 +92,23 @@ class ExplainaboardClient:
 
             return wrapper
 
-        # The code below does two things:
-        # 1. modifies the api client's validation rule of every endpoint
-        # to allow us to specify the X-API-version header in every request
-        # without having to define it in openapi.yaml
-        # 2. decorates the call_with_http_info of every endpoint
-        # so the api version header is attached in every request.
-        for v in vars(self._default_api).values():
-            if type(v) == Endpoint:
-                v.params_map["all"].append(self._api_version_param)
-                v.openapi_types[self._api_version_param] = (str,)
-                v.attribute_map[self._api_version_param] = self._api_version_header
-                v.location_map[self._api_version_param] = "header"
+        if explainaboard_client.check_api_version:
+            # The code below does two things:
+            # 1. modifies the api client's validation rule of every endpoint
+            # to allow us to specify the X-API-version header in every request
+            # without having to define it in openapi.yaml
+            # 2. decorates the call_with_http_info of every endpoint
+            # so the api version header is attached in every request.
+            for v in vars(self._default_api).values():
+                if type(v) == Endpoint:
+                    v.params_map["all"].append(self._api_version_param)
+                    v.openapi_types[self._api_version_param] = (str,)
+                    v.attribute_map[self._api_version_param] = self._api_version_header
+                    v.location_map[self._api_version_param] = "header"
 
-                v.call_with_http_info = with_check_api_version(v.call_with_http_info)
+                    v.call_with_http_info = with_check_api_version(
+                        v.call_with_http_info
+                    )
 
     def close(self):
         self._default_api.api_client.close()

@@ -9,3 +9,4 @@ __all__ = ["ExplainaboardClient"]
 username: str | None = None
 api_key: str | None = None
 environment: Literal["main", "staging", "local"] = "main"
+check_api_version: bool = True
