@@ -5,7 +5,7 @@ import json
 import logging
 from multiprocessing.pool import ApplyResult
 import re
-from typing import Literal, Union
+from typing import Any, Literal, Union
 
 from explainaboard_api_client import __name__ as api_client_name
 from explainaboard_api_client import __version__ as api_client_version
@@ -30,14 +30,14 @@ from explainaboard_api_client.models import (
     SystemOutputProps,
 )
 import explainaboard_client
-from explainaboard_client.config import get_host
-from explainaboard_client.exceptions import APIVersionMismatchException
-from explainaboard_client.tasks import DEFAULT_METRICS, infer_file_type, TaskType
-from explainaboard_client.utils import (
+from explainaboard_client.client_utils import (
     encode_file_to_base64,
     encode_string_to_base64,
     generate_dataset_id,
 )
+from explainaboard_client.config import get_host
+from explainaboard_client.exceptions import APIVersionMismatchException
+from explainaboard_client.tasks import DEFAULT_METRICS, infer_file_type, TaskType
 
 
 class ExplainaboardClient:
@@ -129,7 +129,7 @@ class ExplainaboardClient:
         dataset: str | None = None,
         sub_dataset: str | None = None,
         split: str | None = None,
-        custom_dataset: list[dict] | None = None,
+        custom_dataset: list[dict] | dict[str, Any] | None = None,
         metric_names: list[str] | None = None,
         source_language: str | None = None,
         target_language: str | None = None,
@@ -160,10 +160,16 @@ class ExplainaboardClient:
         # Sanity checks
         if not (source_language or target_language):
             raise ValueError("You must specify source and/or target language")
-        if custom_dataset and (len(custom_dataset) != len(system_output)):
-            raise ValueError(
-                "Custom dataset must have the same length as system output"
+        if custom_dataset:
+            custom_dataset_examples = (
+                custom_dataset
+                if isinstance(custom_dataset, list)
+                else custom_dataset["examples"]
             )
+            if len(custom_dataset_examples) != len(system_output):
+                raise ValueError(
+                    "Custom dataset must have the same length as system output"
+                )
 
         # Infer missing values
         task = TaskType(task)
@@ -192,12 +198,16 @@ class ExplainaboardClient:
             raise ValueError("Must specify dataset or custom_dataset")
 
         loaded_system_output = SystemOutputProps(
-            data=encode_string_to_base64(json.dumps({"examples": system_output})),
+            data=encode_string_to_base64(
+                json.dumps(self._convert_to_json(system_output))
+            ),
             file_type="json",
         )
         if custom_dataset:
             loaded_custom_dataset = SystemOutputProps(
-                data=encode_string_to_base64(json.dumps({"examples": custom_dataset})),
+                data=encode_string_to_base64(
+                    json.dumps(self._convert_to_json(custom_dataset))
+                ),
                 file_type="json",
             )
             props_with_loaded_file = SystemCreateProps(
@@ -549,3 +559,12 @@ class ExplainaboardClient:
             " future. Please use get_user() instead."
         )
         return self._default_api.user_get(**kwargs)
+
+    def _convert_to_json(self, examples: list | dict) -> dict:
+        if isinstance(examples, list):
+            return {"examples": examples}
+        if "examples" not in examples:
+            raise ValueError(
+                "Examples must be a list or a dictionary with an 'examples' key."
+            )
+        return examples

@@ -5,10 +5,10 @@ import traceback
 
 import explainaboard_client
 from explainaboard_client import ExplainaboardClient
+from explainaboard_client.client_utils import prompt_for_auto_upgrade_and_exit
 from explainaboard_client.config import get_frontend
 from explainaboard_client.exceptions import APIVersionMismatchException
 from explainaboard_client.tasks import FileType, TaskType
-from explainaboard_client.utils import prompt_for_auto_upgrade_and_exit
 
 
 def main():

@@ -6,8 +6,8 @@ import traceback
 from explainaboard_api_client import ApiException
 import explainaboard_client
 from explainaboard_client import ExplainaboardClient
+from explainaboard_client.client_utils import prompt_for_auto_upgrade_and_exit
 from explainaboard_client.exceptions import APIVersionMismatchException
-from explainaboard_client.utils import prompt_for_auto_upgrade_and_exit
 from tqdm import tqdm
 
 

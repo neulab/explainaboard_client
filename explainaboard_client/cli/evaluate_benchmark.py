@@ -9,11 +9,11 @@ from explainaboard_api_client.model.system_metadata import SystemMetadata
 from explainaboard_api_client.model.system_output_props import SystemOutputProps
 import explainaboard_client
 from explainaboard_client import ExplainaboardClient
-from explainaboard_client.exceptions import APIVersionMismatchException
-from explainaboard_client.utils import (
+from explainaboard_client.client_utils import (
     generate_dataset_id,
     prompt_for_auto_upgrade_and_exit,
 )
+from explainaboard_client.exceptions import APIVersionMismatchException
 
 
 def validate_outputs(system_outputs):
