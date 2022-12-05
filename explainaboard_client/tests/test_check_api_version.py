@@ -35,7 +35,7 @@ class TestCheckAPIVersion(TestEndpointsE2E):
         )
 
     @_with_wrong_api_version
-    @patch("explainaboard_client.utils.input")
+    @patch("explainaboard_client.client_utils.input")
     def test_check_api_version_mismatch_cli(self, mocked_input):
         # input "n" to decline auto-upgrade
         mocked_input.side_effect = ["n"]
