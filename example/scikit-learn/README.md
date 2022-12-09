@@ -19,6 +19,7 @@ y_predict = classifier.predict(X_test)
 # Create the ExplainaBoard client, wrap the data
 explainaboard_client.username = os.environ.get("EB_USERNAME")
 explainaboard_client.api_key = os.environ.get("EB_API_KEY")
+explainaboard_client.check_api_version = False
 client = explainaboard_client.ExplainaboardClient()
 
 # Wrap the data in ExplainaBoard format
