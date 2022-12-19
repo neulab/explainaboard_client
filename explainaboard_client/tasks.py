@@ -24,10 +24,11 @@ class TaskType(str, Enum):
     cloze_mutiple_choice = "cloze-multiple-choice"
     cloze_generative = "cloze-generative"
     grammatical_error_correction = "grammatical-error-correction"
-    nlg_meta_evaluation = "nlg-meta-evaluation"
     tabular_regression = "tabular-regression"
     tabular_classification = "tabular-classification"
     argument_pair_extraction = "argument-pair-extraction"
+    meta_evaluation_nlg = "meta-evaluation-nlg"
+    meta_evaluation_wmt_da = "meta-evaluation-wmt-da"
 
     @staticmethod
     def list():
@@ -76,10 +77,16 @@ DEFAULT_METRICS: dict[TaskType, list[str]] = {
     TaskType.cloze_mutiple_choice: ["Accuracy", "CorrectCpount"],
     TaskType.cloze_generative: ["CorrectCount"],
     TaskType.grammatical_error_correction: ["SeqCorrectCount"],
-    TaskType.nlg_meta_evaluation: ["SegKtauCorr", "SysPearsonCorr"],
     TaskType.tabular_regression: ["RMSE", "AbsoluteError"],
     TaskType.tabular_classification: ["Accuracy"],
     TaskType.argument_pair_extraction: ["F1"],
+    TaskType.meta_evaluation_nlg: [
+        "SpearmanSampleLevelCorr",
+        "SpearmanSystemLevelCorr",
+        "PearsonSampleLevelCorr",
+        "PearsonSystemLevelCorr",
+    ],
+    TaskType.meta_evaluation_wmt_da: ["SegKtauCorr", "SysPearsonCorr"],
 }
 
 FILE_SUFFIX_MAP = {"txt": "text"}
