@@ -8,7 +8,6 @@ import explainaboard_client
 from explainaboard_client import ExplainaboardClient
 from explainaboard_client.client_utils import prompt_for_auto_upgrade_and_exit
 from explainaboard_client.exceptions import APIVersionMismatchException
-from tqdm import tqdm
 
 
 def main():
@@ -56,7 +55,8 @@ def main():
     client = ExplainaboardClient()
 
     system_strs = []
-    for system_id in tqdm(args.system_ids, desc="retrieving system info"):
+    print("Retrieving system info")
+    for system_id in args.system_ids:
         try:
             system_dict = client.get_system(system_id)
             dataset_dict = system_dict.get("dataset", {})
