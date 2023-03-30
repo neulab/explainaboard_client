@@ -15,15 +15,15 @@ ENV_HOST_MAP: defaultdict[str, HostConfig] = defaultdict(
     HostConfig,
     {
         "main": HostConfig(
-            host="https://explainaboard.inspiredco.ai/api",
+            host="https://explainaboard.inspiredco.ai",
             frontend="https://explainaboard.inspiredco.ai",
         ),
         "staging": HostConfig(
-            host="https://dev.explainaboard.inspiredco.ai/api",
+            host="https://dev.explainaboard.inspiredco.ai",
             frontend="https://dev.explainaboard.inspiredco.ai",
         ),
         "local": HostConfig(
-            host="http://localhost:5000/api", frontend="http://localhost:3000"
+            host="http://localhost:5000", frontend="http://localhost:3000"
         ),
     },
 )
