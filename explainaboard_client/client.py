@@ -33,7 +33,6 @@ import explainaboard_client
 from explainaboard_client.client_utils import (
     encode_file_to_base64,
     encode_string_to_base64,
-    generate_dataset_id,
 )
 from explainaboard_client.config import get_host
 from explainaboard_client.exceptions import APIVersionMismatchException
@@ -184,6 +183,8 @@ class ExplainaboardClient:
             task=task,
             is_private=not public,
             system_name=system_name,
+            dataset_name=dataset,
+            sub_dataset=sub_dataset,
             metric_names=metric_names,
             source_language=source_language,
             target_language=target_language,
@@ -192,10 +193,6 @@ class ExplainaboardClient:
             system_tags=system_tags,
             system_details=system_details,
         )
-        if dataset is not None:
-            metadata.dataset_metadata_id = generate_dataset_id(dataset, sub_dataset)
-        elif not custom_dataset:
-            raise ValueError("Must specify dataset or custom_dataset")
 
         loaded_system_output = SystemOutputProps(
             data=encode_string_to_base64(
@@ -295,6 +292,8 @@ class ExplainaboardClient:
             task=task,
             is_private=not public,
             system_name=system_name,
+            dataset_name=dataset,
+            sub_dataset=sub_dataset,
             metric_names=metric_names,
             source_language=source_language,
             target_language=target_language,
@@ -303,10 +302,6 @@ class ExplainaboardClient:
             system_details=system_details,
             system_tags=system_tags,
         )
-        if dataset is not None:
-            metadata.dataset_metadata_id = generate_dataset_id(dataset, sub_dataset)
-        elif not custom_dataset_file:
-            raise ValueError("Must specify dataset or custom_dataset_file")
 
         loaded_system_output = SystemOutputProps(
             data=encode_file_to_base64(system_output_file),

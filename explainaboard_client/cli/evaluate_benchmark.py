@@ -10,7 +10,6 @@ from explainaboard_api_client.model.system_output_props import SystemOutputProps
 import explainaboard_client
 from explainaboard_client import ExplainaboardClient
 from explainaboard_client.client_utils import (
-    generate_dataset_id,
     prompt_for_auto_upgrade_and_exit,
 )
 from explainaboard_client.exceptions import APIVersionMismatchException
@@ -135,7 +134,8 @@ def main():
             metric_names=metric_names,
             source_language=source_language,
             target_language=target_language,
-            dataset_metadata_id=generate_dataset_id(dataset_name, sub_dataset),
+            dataset_name=dataset_name,
+            sub_dataset=sub_dataset,
             dataset_split=dataset_split,
             shared_users=shared_users,
             system_details=system_details,
