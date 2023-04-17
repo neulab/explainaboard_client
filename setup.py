@@ -24,7 +24,7 @@ setup(
     entry_points={
         "console_scripts": [],
     },
-    install_requires=["explainaboard_api_client>=0.4.1"],
+    install_requires=["explainaboard_api_client>=0.4.3"],
     extras_require={
         "dev": [
             "pre-commit",

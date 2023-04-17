@@ -17,17 +17,6 @@ def encode_string_to_base64(text: str) -> str:
     return base64.b64encode(text.encode("utf-8")).decode("utf-8")
 
 
-def generate_dataset_id(dataset_name: str, sub_dataset: Optional[str]) -> str:
-    """HACK probably shouldn't expose this logic to the users"""
-    if not dataset_name:
-        raise ValueError(
-            "dataset_name cannot be None or empty. If you are "
-            "using a custom dataset, please remove the dataset argument."
-        )
-    sub_dataset = sub_dataset if sub_dataset else "None"
-    return f"{dataset_name}---{sub_dataset}"
-
-
 def sanitize_for_json(input_obj: Any) -> Any:
     if hasattr(input_obj, "to_dict"):
         return sanitize_for_json(getattr(input_obj, "to_dict")())
